@@ -55,7 +55,7 @@
       <button class="mbtn wide" onclick="loadHistory()"><div class="mi">📋</div><b>ประวัติกิจกรรมของฉัน</b><small>ติดตามสถานะและคะแนน</small></button>
       <button id="adminBtn" class="mbtn adminbtn hidden" onclick="loadAdmin()"><div class="mi">⚙️</div><b>Admin Dashboard</b><small>ตรวจหลักฐาน อนุมัติคะแนน รางวัล</small></button>
     </div>
-    <div class="footer">DTH Health · Don Tum Hospital · v7 Admin Safe Review</div>
+    <div class="footer">DTH Health · Don Tum Hospital · v8 Fast Submit</div>
   </main>
 </div>
 
@@ -68,6 +68,8 @@ const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug
 let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
 let profilePromptShown=false;
 let dashboardTimer=null;
+let activitySubmitBusy=false;
+let activitySubmitStartedAt=0;
 let reviewBusy={};
 let activeReview=null;
 
@@ -77,6 +79,7 @@ window.addEventListener("message",e=>{
   const d=m.payload||{};
   if(!d.ok){
     if(activeReview) reviewFailed(d.message||"เกิดข้อผิดพลาด");
+    if(currentAction==="submitActivity") activitySubmitFailed(d.message||"เกิดข้อผิดพลาด");
     toast(d.message||"เกิดข้อผิดพลาด");
     return;
   }
@@ -92,7 +95,9 @@ window.addEventListener("message",e=>{
     case "getRanking": renderRanking(d.ranking); break;
     case "getRewards": renderRewards(d.rewards); break;
     case "redeemReward": renderRewards(d.rewards); toast(d.message||"แลกรางวัลแล้ว"); break;
-    case "submitActivity": closeSheet(); toast(d.message||"ส่งกิจกรรมแล้ว"); break;
+    case "submitActivity":
+      activitySubmitSucceeded(d);
+      break;
     case "adminGetOverview": renderAdmin(d.admin); break;
     case "adminGetPending": renderAdminPending(d.activities||[]); break;
     case "adminGetEvidence": showEvidence(d.evidenceData); break;
@@ -253,13 +258,140 @@ function openActivity(){
       <div class="field"><label>วันที่</label><input id="adate" type="date" required></div>
       <div class="field"><label>หมายเหตุ</label><textarea id="anote" maxlength="500"></textarea></div>
       <div class="field"><label>รูปหลักฐาน</label><input id="efile" type="file" accept="image/*" required><img id="eprev" class="preview"></div>
-      <button class="btn primary">ส่งกิจกรรม</button>
+      <button id="activitySubmitBtn" class="btn primary">ส่งกิจกรรม</button>
+      <div id="activitySubmitState" class="review-state"></div>
     </form>`);
   byId("adate").value=new Date().toISOString().slice(0,10); evidenceData="";
-  byId("efile").addEventListener("change",async function(){const f=this.files&&this.files[0];if(!f)return;try{evidenceData=await compressImage(f);byId("eprev").src=evidenceData;byId("eprev").style.display="block"}catch(e){toast("อ่านรูปไม่สำเร็จ")}});
+  byId("efile").addEventListener("change",async function(){
+    const f=this.files&&this.files[0];if(!f)return;
+    const s=byId("activitySubmitState");
+    if(s){s.className="review-state show busy";s.textContent="กำลังเตรียมรูปหลักฐาน...";}
+    try{
+      evidenceData=await compressImage(f);
+      byId("eprev").src=evidenceData;
+      byId("eprev").style.display="block";
+      if(s){s.className="review-state show done";s.textContent="✅ รูปพร้อมส่ง";}
+    }catch(e){
+      if(s){s.className="review-state show error";s.textContent="อ่านรูปไม่สำเร็จ กรุณาเลือกรูปใหม่";}
+      toast("อ่านรูปไม่สำเร็จ");
+    }
+  });
 }
-function submitActivity(e){e.preventDefault();if(!evidenceData){toast("กรุณาแนบรูป");return}send("submitActivity",{activityType:byId("atype").value,distanceKm:byId("dist").value,durationMinutes:byId("mins").value,activityDate:byId("adate").value,note:byId("anote").value,evidenceData})}
-function compressImage(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{let w=im.width,h=im.height,m=1280;if(w>m||h>m){const q=Math.min(m/w,m/h);w=Math.round(w*q);h=Math.round(h*q)}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);let q=.78,u=c.toDataURL("image/jpeg",q);while(u.length>2200000&&q>.42){q-=.08;u=c.toDataURL("image/jpeg",q)}res(u)};im.onerror=rej;im.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}
+function submitActivity(e){
+  e.preventDefault();
+
+  if(activitySubmitBusy){
+    toast("กำลังส่งกิจกรรมอยู่ กรุณารอสักครู่");
+    return;
+  }
+  if(!evidenceData){
+    toast("กรุณาแนบรูป");
+    return;
+  }
+
+  activitySubmitBusy=true;
+  activitySubmitStartedAt=Date.now();
+
+  const btn=byId("activitySubmitBtn");
+  const state=byId("activitySubmitState");
+  if(btn){
+    btn.disabled=true;
+    btn.textContent="⏳ กำลังส่งกิจกรรม...";
+  }
+  if(state){
+    state.className="review-state show busy";
+    state.innerHTML='<span class="review-spinner">⏳</span> กำลังอัปโหลดและบันทึกกิจกรรม...<br><span style="font-weight:500">กรุณารอ ไม่ต้องกดซ้ำ</span>';
+  }
+
+  send("submitActivity",{
+    activityType:byId("atype").value,
+    distanceKm:byId("dist").value,
+    durationMinutes:byId("mins").value,
+    activityDate:byId("adate").value,
+    note:byId("anote").value,
+    evidenceData
+  });
+
+  setTimeout(()=>{
+    if(activitySubmitBusy){
+      const s=byId("activitySubmitState");
+      if(s){
+        s.className="review-state show busy";
+        s.innerHTML='<span class="review-spinner">⏳</span> ยังอยู่ระหว่างบันทึก...<br><span style="font-weight:500">ไม่ต้องกดซ้ำ ระบบกำลังทำงาน</span>';
+      }
+    }
+  },8000);
+}
+
+function activitySubmitSucceeded(d){
+  activitySubmitBusy=false;
+
+  // Update visible counters immediately without making the user wait
+  // for another full dashboard request.
+  const all=byId("aAll"), pend=byId("aPend");
+  if(all)all.textContent=(Number(all.textContent||0)+1);
+  if(pend)pend.textContent=(Number(pend.textContent||0)+1);
+
+  const elapsed=Math.max(1,Math.round((Date.now()-activitySubmitStartedAt)/1000));
+  closeSheet();
+  toast(`✅ ส่งกิจกรรมเรียบร้อย (${elapsed} วินาที) รอ Admin ตรวจสอบ`);
+  evidenceData="";
+  activitySubmitStartedAt=0;
+}
+
+function activitySubmitFailed(message){
+  activitySubmitBusy=false;
+  const btn=byId("activitySubmitBtn");
+  const state=byId("activitySubmitState");
+  if(btn){
+    btn.disabled=false;
+    btn.textContent="ส่งกิจกรรม";
+  }
+  if(state){
+    state.className="review-state show error";
+    state.textContent="ส่งไม่สำเร็จ: "+(message||"เกิดข้อผิดพลาด")+" — สามารถกดส่งใหม่ได้";
+  }
+  activitySubmitStartedAt=0;
+}
+
+function compressImage(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      const im=new Image();
+      im.onload=()=>{
+        let w=im.width,h=im.height;
+        const maxSide=960;
+
+        if(w>maxSide||h>maxSide){
+          const scale=Math.min(maxSide/w,maxSide/h);
+          w=Math.round(w*scale);
+          h=Math.round(h*scale);
+        }
+
+        const c=document.createElement("canvas");
+        c.width=w;c.height=h;
+        c.getContext("2d").drawImage(im,0,0,w,h);
+
+        // Keep evidence readable but much smaller than the previous ~2 MB payload.
+        let q=.72;
+        let u=c.toDataURL("image/jpeg",q);
+        const targetChars=750000;
+
+        while(u.length>targetChars && q>.42){
+          q-=.07;
+          u=c.toDataURL("image/jpeg",q);
+        }
+
+        res(u);
+      };
+      im.onerror=rej;
+      im.src=r.result;
+    };
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
+}
 
 /* History */
 function loadHistory(){openSheet("📋 ประวัติกิจกรรม","<div class='muted'>กำลังโหลด...</div>");send("getMyActivities",{})}
