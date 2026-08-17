@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DTH Health</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,"Noto Sans Thai",sans-serif;background:#f4f7f5;color:#17202a}
+    .app{max-width:560px;margin:auto;min-height:100vh;padding:18px 16px 35px}
+    .hidden{display:none!important}
+    .card{background:#fff;border-radius:22px;box-shadow:0 8px 28px rgba(0,0,0,.07)}
+    .loading{margin-top:50px;padding:35px 25px;text-align:center}
+    .runner{font-size:58px}
+    .status{margin-top:20px;padding:14px;border-radius:14px;background:#f2f4f5;color:#68737d}
+    .status.ok{background:#eafbf0;color:#168545}
+    .status.error{background:#fff0f1;color:#b42335}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand-icon{width:46px;height:46px;background:#e9fbef;border-radius:15px;display:grid;place-items:center;font-size:26px}
+    .brand-title{font-size:21px;font-weight:bold}
+    .brand-sub{font-size:12px;color:#7b8794}
+    .mini-avatar{width:43px;height:43px;border-radius:50%;object-fit:cover;border:3px solid #dcfce7}
+    .hero{padding:20px;background:linear-gradient(135deg,#fff,#effcf3)}
+    .hello{display:flex;align-items:center;gap:14px}
+    .avatar{width:70px;height:70px;border-radius:50%;object-fit:cover;border:4px solid #fff}
+    .hello h2{margin:0 0 5px;font-size:22px}
+    .muted,.label{color:#7b8794;font-size:13px}
+    .score-row{display:grid;grid-template-columns:1.2fr .8fr;gap:10px;margin-top:17px}
+    .score-box,.rank-box{padding:15px;border-radius:17px;background:#fff}
+    .rank-box{background:#fff8e8}
+    .big{font-size:28px;font-weight:bold;margin-top:5px}
+    .section-title{margin:20px 4px 10px;font-weight:bold;font-size:17px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .stat{text-align:center;padding:14px 5px}
+    .stat b{display:block;font-size:21px;margin-top:5px}
+    .menu{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+    .menu-btn{border:0;background:#fff;border-radius:19px;padding:18px 14px;text-align:left;box-shadow:0 6px 20px rgba(0,0,0,.06);cursor:pointer}
+    .menu-icon{font-size:29px;margin-bottom:8px}
+    .menu-btn b{display:block;font-size:16px}
+    .menu-btn small{display:block;margin-top:5px;color:#7b8794;line-height:1.4}
+    .wide{grid-column:1/-1;background:#173128;color:#fff}
+    .wide small{color:#c8d6d0}
+    .admin{grid-column:1/-1;background:#fff3df}
+    .progress-card{margin-top:10px;padding:17px}
+    .progress{height:9px;background:#edf0ef;border-radius:20px;margin-top:12px;overflow:hidden}
+    .progress-fill{height:100%;width:0;background:#06c755;border-radius:20px}
+    .footer{text-align:center;color:#9aa3aa;font-size:12px;margin-top:25px}
+    .toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#17202a;color:#fff;padding:12px 17px;border-radius:13px;opacity:0;transition:.3s;max-width:90%;text-align:center;z-index:100}
+    .toast.show{opacity:1}
+    .modal{position:fixed;inset:0;background:rgba(16,24,40,.55);z-index:90;padding:18px;display:flex;align-items:flex-end;justify-content:center}
+    .modal-card{width:min(560px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:24px 24px 16px 16px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .modal-head h3{margin:0;font-size:20px}
+    .close-btn{border:0;background:#f2f4f5;border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer}
+    .field{margin:13px 0}
+    .field label{display:block;font-weight:700;font-size:14px;margin-bottom:7px}
+    .field input,.field select,.field textarea{width:100%;border:1px solid #d8dee4;border-radius:13px;padding:12px 13px;font-size:16px;background:#fff}
+    .field textarea{min-height:82px;resize:vertical}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .preview{display:none;width:100%;max-height:260px;object-fit:contain;border-radius:14px;margin-top:10px;background:#f4f6f5}
+    .submit-btn{width:100%;border:0;border-radius:14px;padding:14px;background:#06c755;color:#fff;font-size:17px;font-weight:700;cursor:pointer;margin-top:8px}
+    .submit-btn:disabled{opacity:.55;cursor:not-allowed}
+    .helper{font-size:12px;color:#7b8794;margin-top:6px;line-height:1.5}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="loadingView" class="card loading">
+    <div class="runner">🏃‍♀️</div><h1>DTH Health</h1><div class="muted">Employee Health & Fitness</div>
+    <div id="status" class="status">กำลังเชื่อมต่อ LINE...</div>
+  </div>
+  <main id="dashboardView" class="hidden">
+    <div class="top">
+      <div class="brand"><div class="brand-icon">🏃‍♀️</div><div><div class="brand-title">DTH Health</div><div class="brand-sub">สุขภาพดีไปด้วยกัน</div></div></div>
+      <img id="miniAvatar" class="mini-avatar" alt="">
+    </div>
+    <section class="card hero">
+      <div class="hello"><img id="mainAvatar" class="avatar" alt=""><div><h2 id="displayName">ผู้ใช้งาน</h2><div id="department" class="muted">พนักงานโรงพยาบาลดอนตูม</div></div></div>
+      <div class="score-row">
+        <div class="score-box"><div class="label">คะแนนสะสม</div><div class="big"><span id="totalPoints">0</span></div><div class="label">คะแนน</div></div>
+        <div class="rank-box"><div class="label">อันดับล่าสุด</div><div class="big">#<span id="rank">-</span></div><div class="label">จาก <span id="participants">0</span> คน</div></div>
+      </div>
+    </section>
+    <div class="section-title">กิจกรรมของฉัน</div>
+    <div class="stats">
+      <div class="card stat"><span class="label">ทั้งหมด</span><b id="activityCount">0</b></div>
+      <div class="card stat"><span class="label">รออนุมัติ</span><b id="pendingCount">0</b></div>
+      <div class="card stat"><span class="label">อนุมัติแล้ว</span><b id="approvedCount">0</b></div>
+    </div>
+    <div class="section-title">เมนูหลัก</div>
+    <div class="menu">
+      <button class="menu-btn" onclick="openActivityForm()"><div class="menu-icon">🏃</div><b>บันทึกกิจกรรม</b><small>วิ่ง เดิน ปั่นจักรยาน และแนบหลักฐาน</small></button>
+      <button class="menu-btn" onclick="comingSoon('สุขภาพของฉัน')"><div class="menu-icon">❤️</div><b>สุขภาพของฉัน</b><small>น้ำหนัก BMI รอบเอว และรอบสะโพก</small></button>
+      <button class="menu-btn" onclick="comingSoon('Ranking')"><div class="menu-icon">🏆</div><b>Ranking</b><small>ดูอันดับและคะแนนการแข่งขัน</small></button>
+      <button class="menu-btn" onclick="comingSoon('Rewards')"><div class="menu-icon">🎁</div><b>Rewards</b><small>ดูของรางวัลและแลกคะแนน</small></button>
+      <button class="menu-btn wide" onclick="comingSoon('ประวัติกิจกรรม')"><div class="menu-icon">📋</div><b>ประวัติกิจกรรมของฉัน</b><small>ติดตามผลการอนุมัติกิจกรรม</small></button>
+      <button id="adminButton" class="menu-btn admin hidden" onclick="comingSoon('Admin Dashboard')"><div class="menu-icon">⚙️</div><b>Admin Dashboard</b><small>ตรวจหลักฐาน อนุมัติกิจกรรม คะแนน และรางวัล</small></button>
+    </div>
+    <div class="section-title">Health Progress</div>
+    <section class="card progress-card"><b>💚 การติดตามสุขภาพ</b><div class="label">บันทึกข้อมูลแล้ว <span id="healthRecords">0</span> ครั้ง</div><div class="progress"><div id="healthProgress" class="progress-fill"></div></div></section>
+    <div class="footer">DTH Health · Don Tum Hospital</div>
+  </main>
+</div>
+
+<div id="activityModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head"><div><h3>🏃 บันทึกกิจกรรม</h3><div class="helper">ส่งแล้วจะอยู่สถานะ “รออนุมัติ”</div></div><button class="close-btn" onclick="closeActivityForm()" aria-label="ปิด">×</button></div>
+    <form id="activityForm" onsubmit="submitActivity(event)">
+      <div class="field"><label>ประเภทกิจกรรม</label><select id="activityType" required><option value="run">🏃 วิ่ง</option><option value="walk">🚶 เดิน</option><option value="bike">🚴 ปั่นจักรยาน</option></select></div>
+      <div class="two-col">
+        <div class="field"><label>ระยะทาง (กม.)</label><input id="distanceKm" type="number" min="0.01" max="500" step="0.01" inputmode="decimal" placeholder="เช่น 3.50" required></div>
+        <div class="field"><label>เวลา (นาที)</label><input id="durationMinutes" type="number" min="1" max="1440" step="1" inputmode="numeric" placeholder="เช่น 30" required></div>
+      </div>
+      <div class="field"><label>วันที่ทำกิจกรรม</label><input id="activityDate" type="date" required></div>
+      <div class="field"><label>หมายเหตุ</label><textarea id="activityNote" maxlength="500" placeholder="เช่น วิ่งรอบสวน / เดินหลังเลิกงาน"></textarea></div>
+      <div class="field"><label>รูปหลักฐาน</label><input id="evidenceFile" type="file" accept="image/*" required><div class="helper">ระบบจะย่อรูปก่อนส่ง และเก็บหลักฐานไว้ใน Google Drive ของระบบ</div><img id="evidencePreview" class="preview" alt="ตัวอย่างหลักฐาน"></div>
+      <button id="submitActivityBtn" class="submit-btn" type="submit">ส่งกิจกรรม</button>
+    </form>
+  </div>
+</div>
+
+<iframe name="backendFrame" id="backendFrame" style="display:none"></iframe>
+<div id="toast" class="toast"></div>
+
+<script>
+const LIFF_ID = "2011115304-nt4j971c";
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
+let idToken = "";
+let evidenceData = "";
+let isSubmittingActivity = false;
+
+window.addEventListener("message", function(event) {
+  const message = event.data;
+  if (!message || message.source !== "DTH_HEALTH_BACKEND") return;
+  const data = message.payload || {};
+  if (!data.ok) {
+    if (isSubmittingActivity) { setActivitySubmitting(false); toast(data.message || "ส่งกิจกรรมไม่สำเร็จ"); }
+    else { showError(data.message || "โหลดข้อมูลไม่สำเร็จ"); }
+    return;
+  }
+  if (data.action === "submitActivity") {
+    setActivitySubmitting(false);
+    closeActivityForm();
+    toast(data.message || "✅ ส่งกิจกรรมเรียบร้อย");
+    if (data.dashboard) renderDashboard(data.dashboard, data.user || {});
+    return;
+  }
+  renderDashboard(data.dashboard || {}, data.user || {});
+});
+
+async function startApp() {
+  try {
+    await liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
+    if (!liff.isLoggedIn()) { liff.login({ redirectUri: window.location.href }); return; }
+    idToken = liff.getIDToken();
+    if (!idToken) throw new Error("ไม่พบ LINE ID Token");
+    const status = document.getElementById("status");
+    status.textContent = "✅ เชื่อมต่อ LINE สำเร็จ กำลังโหลดข้อมูล...";
+    status.className = "status ok";
+    sendBackend("getDashboard", {});
+  } catch (err) { showError(err.message || String(err)); }
+}
+
+function sendBackend(action, fields) {
+  const form = document.createElement("form");
+  form.method = "POST"; form.action = BACKEND_URL; form.target = "backendFrame"; form.style.display = "none";
+  addHidden(form, "action", action); addHidden(form, "idToken", idToken);
+  Object.entries(fields || {}).forEach(([key, value]) => addHidden(form, key, value == null ? "" : String(value)));
+  document.body.appendChild(form); form.submit(); setTimeout(() => form.remove(), 4000);
+}
+function addHidden(form, name, value) {
+  const input = document.createElement("input"); input.type = "hidden"; input.name = name; input.value = value; form.appendChild(input);
+}
+function renderDashboard(dashboard, user) {
+  document.getElementById("loadingView").classList.add("hidden");
+  document.getElementById("dashboardView").classList.remove("hidden");
+  document.getElementById("displayName").textContent = dashboard.displayName || user.displayName || "ผู้ใช้งาน";
+  document.getElementById("department").textContent = dashboard.department || "พนักงานโรงพยาบาลดอนตูม";
+  document.getElementById("totalPoints").textContent = Number(dashboard.totalPoints || 0).toLocaleString("th-TH");
+  document.getElementById("rank").textContent = dashboard.rank || "-";
+  document.getElementById("participants").textContent = dashboard.participantCount || 0;
+  document.getElementById("activityCount").textContent = dashboard.activityCount || 0;
+  document.getElementById("pendingCount").textContent = dashboard.pendingCount || 0;
+  document.getElementById("approvedCount").textContent = dashboard.approvedCount || 0;
+  document.getElementById("healthRecords").textContent = dashboard.healthRecords || 0;
+  const picture = dashboard.pictureUrl || user.pictureUrl || "";
+  if (picture) { document.getElementById("mainAvatar").src = picture; document.getElementById("miniAvatar").src = picture; }
+  if (String(dashboard.role || "").toLowerCase() === "admin") document.getElementById("adminButton").classList.remove("hidden");
+  document.getElementById("healthProgress").style.width = Math.min(100, Number(dashboard.healthRecords || 0) * 20) + "%";
+}
+function openActivityForm() {
+  evidenceData = ""; document.getElementById("activityForm").reset();
+  document.getElementById("activityDate").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("evidencePreview").style.display = "none";
+  document.getElementById("activityModal").classList.remove("hidden");
+}
+function closeActivityForm() { if (!isSubmittingActivity) document.getElementById("activityModal").classList.add("hidden"); }
+document.getElementById("evidenceFile").addEventListener("change", async function() {
+  const file = this.files && this.files[0];
+  if (!file) { evidenceData = ""; document.getElementById("evidencePreview").style.display = "none"; return; }
+  try {
+    evidenceData = await compressImage(file);
+    const preview = document.getElementById("evidencePreview"); preview.src = evidenceData; preview.style.display = "block";
+  } catch (err) { evidenceData = ""; this.value = ""; toast("อ่านรูปไม่สำเร็จ กรุณาเลือกรูปใหม่"); }
+});
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const maxSide = 1280; let width = img.width, height = img.height;
+        if (width > maxSide || height > maxSide) { const ratio = Math.min(maxSide / width, maxSide / height); width = Math.round(width * ratio); height = Math.round(height * ratio); }
+        const canvas = document.createElement("canvas"); canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext("2d"); ctx.drawImage(img, 0, 0, width, height);
+        let quality = 0.78; let dataUrl = canvas.toDataURL("image/jpeg", quality);
+        while (dataUrl.length > 2300000 && quality > 0.42) { quality -= 0.08; dataUrl = canvas.toDataURL("image/jpeg", quality); }
+        resolve(dataUrl);
+      };
+      img.onerror = reject; img.src = reader.result;
+    };
+    reader.onerror = reject; reader.readAsDataURL(file);
+  });
+}
+function submitActivity(event) {
+  event.preventDefault();
+  if (!evidenceData) { toast("กรุณาแนบรูปหลักฐาน"); return; }
+  const fields = {
+    activityType: document.getElementById("activityType").value,
+    distanceKm: document.getElementById("distanceKm").value,
+    durationMinutes: document.getElementById("durationMinutes").value,
+    activityDate: document.getElementById("activityDate").value,
+    note: document.getElementById("activityNote").value,
+    evidenceData: evidenceData
+  };
+  setActivitySubmitting(true); sendBackend("submitActivity", fields);
+}
+function setActivitySubmitting(value) {
+  isSubmittingActivity = value; const btn = document.getElementById("submitActivityBtn");
+  btn.disabled = value; btn.textContent = value ? "กำลังส่ง..." : "ส่งกิจกรรม";
+}
+function showError(message) { const status = document.getElementById("status"); status.textContent = "❌ " + message; status.className = "status error"; }
+function toast(message) { const el = document.getElementById("toast"); el.textContent = message; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 2500); }
+function comingSoon(name) { toast(name + " — เราจะเชื่อมฟังก์ชันนี้ในขั้นถัดไป"); }
+startApp();
+</script>
+</body>
+</html>
