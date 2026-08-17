@@ -53,13 +53,13 @@
     <div class="section">เมนูหลัก</div>
     <div class="menu">
       <button class="mbtn" onclick="openActivity()"><div class="mi">🏃</div><b>บันทึกกิจกรรม</b><small>วิ่ง เดิน ปั่น และแนบหลักฐาน</small></button>
-      <button class="mbtn" onclick="openHealth()"><div class="mi">❤️</div><b>สุขภาพของฉัน</b><small>น้ำหนัก ส่วนสูง BMI เอว/สะโพก</small></button>
+      <button class="mbtn" onclick="openHealth()"><div class="mi">❤️</div><b>สุขภาพของฉัน</b><small>น้ำหนัก ส่วนสูง BMI รอบเอว/สะโพก (นิ้ว)</small></button>
       <button class="mbtn" onclick="loadRanking()"><div class="mi">🏆</div><b>Ranking</b><small>อันดับจากคะแนนกิจกรรม</small></button>
       <button class="mbtn" onclick="loadRewards()"><div class="mi">🎁</div><b>Rewards</b><small>ดูและแลกรางวัล</small></button>
       <button class="mbtn wide" onclick="loadHistory()"><div class="mi">📋</div><b>ประวัติกิจกรรมของฉัน</b><small>ติดตามสถานะและคะแนน</small></button>
       <button id="adminBtn" class="mbtn adminbtn hidden" onclick="loadAdmin()"><div class="mi">⚙️</div><b>Admin Dashboard</b><small>ตรวจหลักฐาน อนุมัติคะแนน รางวัล</small></button>
     </div>
-    <div class="footer">DTH Health · Don Tum Hospital · v9 Evidence Return</div>
+    <div class="footer">DTH Health · Don Tum Hospital</div>
   </main>
 </div>
 
@@ -74,6 +74,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
+const APP_BUILD="prod-2026-08-17-inches";
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
 let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
@@ -262,6 +263,17 @@ function saveProfile(e){
 
 /* Activity */
 function openActivity(){
+  const profileComplete=Boolean(
+    String(currentProfile.firstName||"").trim() &&
+    String(currentProfile.lastName||"").trim() &&
+    Number(currentProfile.age||0) > 0 &&
+    String(currentProfile.department||"").trim()
+  );
+  if(!profileComplete){
+    toast("กรุณากรอกข้อมูลเจ้าหน้าที่ให้ครบก่อนบันทึกกิจกรรม");
+    openProfile();
+    return;
+  }
   openSheet("🏃 บันทึกกิจกรรม",`
     <form onsubmit="submitActivity(event)">
       <div class="field"><label>ประเภท</label><select id="atype"><option value="run">🏃 วิ่ง</option><option value="walk">🚶 เดิน</option><option value="bike">🚴 ปั่นจักรยาน</option></select></div>
@@ -345,7 +357,7 @@ function activitySubmitSucceeded(d){
 
   const elapsed=Math.max(1,Math.round((Date.now()-activitySubmitStartedAt)/1000));
   closeSheet();
-  toast(`✅ ส่งกิจกรรมเรียบร้อย (${elapsed} วินาที) รอ Admin ตรวจสอบ`);
+  toast(`✅ ส่งกิจกรรมเรียบร้อย (${elapsed} วินาที) · รอการตรวจสอบ`);
   evidenceData="";
   activitySubmitStartedAt=0;
 }
@@ -417,13 +429,25 @@ function renderHistory(rows){
 function openHealth(){openSheet("❤️ สุขภาพของฉัน","<div class='muted'>กำลังโหลด...</div>");send("getHealth",{})}
 function renderHealth(x){
   const l=x&&x.latest;let h="";
-  if(l){h+=`<div class="healthgrid"><div class="metric">น้ำหนัก<strong>${l.weightKg} kg</strong></div><div class="metric">BMI<strong>${l.bmi}</strong></div><div class="metric">รอบเอว<strong>${l.waistCm} cm</strong></div><div class="metric">เอว/สะโพก<strong>${l.whr}</strong></div></div><div class="note" style="margin-top:8px">BMI: ${esc(x.bmiStatus||"")} · ช่วงอ้างอิง ${esc(x.bmiReference||"")}</div>`;
-    if(x.changes)h+=`<div class="card item" style="margin-top:9px"><b>การเปลี่ยนแปลงจากครั้งแรก</b><div class="muted">น้ำหนัก ${x.changes.weightKg>=0?"+":""}${x.changes.weightKg} kg · รอบเอว ${x.changes.waistCm>=0?"+":""}${x.changes.waistCm} cm · BMI ${x.changes.bmi>=0?"+":""}${x.changes.bmi}</div></div>`;
+  if(l){h+=`<div class="healthgrid"><div class="metric">น้ำหนัก<strong>${l.weightKg} kg</strong></div><div class="metric">BMI<strong>${l.bmi}</strong></div><div class="metric">รอบเอว<strong>${(Number(l.waistCm||0)/2.54).toFixed(1)} นิ้ว</strong></div><div class="metric">เอว/สะโพก<strong>${l.whr}</strong></div></div><div class="note" style="margin-top:8px">BMI: ${esc(x.bmiStatus||"")} · ช่วงอ้างอิง ${esc(x.bmiReference||"")}</div>`;
+    if(x.changes)h+=`<div class="card item" style="margin-top:9px"><b>การเปลี่ยนแปลงจากครั้งแรก</b><div class="muted">น้ำหนัก ${x.changes.weightKg>=0?"+":""}${x.changes.weightKg} kg · รอบเอว ${(Number(x.changes.waistCm||0)/2.54)>=0?"+":""}${(Number(x.changes.waistCm||0)/2.54).toFixed(1)} นิ้ว · BMI ${x.changes.bmi>=0?"+":""}${x.changes.bmi}</div></div>`;
   }else h+=`<div class="muted">ยังไม่มีข้อมูลสุขภาพ</div>`;
-  h+=`<div class="section">บันทึกข้อมูลใหม่</div><form onsubmit="saveHealth(event)"><div class="two"><div class="field"><label>น้ำหนัก (kg)</label><input id="wt" type="number" step=".1" required></div><div class="field"><label>ส่วนสูง (cm)</label><input id="ht" type="number" step=".1" required></div></div><div class="two"><div class="field"><label>รอบเอว (cm)</label><input id="wa" type="number" step=".1" required></div><div class="field"><label>รอบสะโพก (cm)</label><input id="hip" type="number" step=".1" required></div></div><div class="field"><label>วันที่</label><input id="hdate" type="date" required></div><button class="btn primary">บันทึกสุขภาพ</button></form><div class="note" style="margin-top:9px">ข้อมูลสุขภาพแสดงเฉพาะเจ้าของบัญชี ไม่ถูกนำไปจัดอันดับกับผู้อื่น</div>`;
+  h+=`<div class="section">บันทึกข้อมูลใหม่</div><form onsubmit="saveHealth(event)"><div class="two"><div class="field"><label>น้ำหนัก (kg)</label><input id="wt" type="number" step=".1" required></div><div class="field"><label>ส่วนสูง (cm)</label><input id="ht" type="number" step=".1" required></div></div><div class="two"><div class="field"><label>รอบเอว (นิ้ว)</label><input id="wa" type="number" step=".1" min="1" required></div><div class="field"><label>รอบสะโพก (นิ้ว)</label><input id="hip" type="number" step=".1" min="1" required></div></div><div class="field"><label>วันที่</label><input id="hdate" type="date" required></div><button class="btn primary">บันทึกสุขภาพ</button></form><div class="note" style="margin-top:9px">ข้อมูลสุขภาพแสดงเฉพาะเจ้าของบัญชี ไม่ถูกนำไปจัดอันดับกับผู้อื่น</div>`;
   byId("sheetBody").innerHTML=h;byId("hdate").value=new Date().toISOString().slice(0,10);
 }
-function saveHealth(e){e.preventDefault();send("saveHealth",{weightKg:byId("wt").value,heightCm:byId("ht").value,waistCm:byId("wa").value,hipCm:byId("hip").value,recordDate:byId("hdate").value})}
+function saveHealth(e){
+  e.preventDefault();
+  const waistIn=Number(byId("wa").value);
+  const hipIn=Number(byId("hip").value);
+  if(!waistIn||!hipIn){toast("กรุณากรอกรอบเอวและรอบสะโพก");return}
+  send("saveHealth",{
+    weightKg:byId("wt").value,
+    heightCm:byId("ht").value,
+    waistCm:(waistIn*2.54).toFixed(2),
+    hipCm:(hipIn*2.54).toFixed(2),
+    recordDate:byId("hdate").value
+  })
+}
 
 /* Ranking */
 function loadRanking(){openSheet("🏆 Ranking","<div class='muted'>กำลังโหลด...</div>");send("getRanking",{})}
