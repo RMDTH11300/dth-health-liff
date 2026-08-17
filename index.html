@@ -11,6 +11,8 @@
 .loading{margin-top:48px;padding:34px;text-align:center}.loading .ico{font-size:54px}.muted{color:#76827d;font-size:13px}.status{margin-top:18px;padding:13px;border-radius:13px;background:#eef2f0;color:#65706c}.status.ok{background:#eaf9ef;color:#147a3e}.status.err{background:#fff0f1;color:#b42335}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.brand{display:flex;align-items:center;gap:10px}.brand-ico{width:46px;height:46px;border-radius:14px;background:#e9fbef;display:grid;place-items:center;font-size:26px}.brand-title{font-size:21px;font-weight:800}.avatar-mini{width:44px;height:44px;border-radius:50%;object-fit:cover;border:3px solid #dcfce7}
 .hero{padding:19px;background:linear-gradient(135deg,#fff,#effbf3)}.profile{display:flex;gap:13px;align-items:center}.avatar{width:68px;height:68px;border-radius:50%;object-fit:cover}.profile h2{margin:0 0 4px}
+.profile-edit{margin-top:7px;border:0;background:#eef7f2;color:#1b6f47;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:700;cursor:pointer}
+.profile-edit.warn{background:#fff4d8;color:#8a6200}
 .scoregrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.scorebox{padding:14px;border-radius:17px;background:#fff}.scorebox.rank{background:#fff8e8}.big{font-size:28px;font-weight:800}
 .section{margin:20px 3px 9px;font-weight:800}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center;padding:13px 4px}.stat b{display:block;font-size:21px;margin-top:4px}
 .menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mbtn{border:0;background:#fff;border-radius:18px;padding:17px 13px;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.06);cursor:pointer}.mbtn .mi{font-size:28px;margin-bottom:7px}.mbtn b{display:block;font-size:15px}.mbtn small{color:#74807b;display:block;margin-top:4px;line-height:1.4}.wide{grid-column:1/-1;background:#18352b;color:#fff}.wide small{color:#c9d6d1}.adminbtn{grid-column:1/-1;background:#fff0d8}
@@ -30,7 +32,7 @@
   <div id="loading" class="card loading"><div class="ico">🏃‍♀️</div><h1>DTH Health</h1><div class="muted">Employee Health & Fitness</div><div id="status" class="status">กำลังเชื่อมต่อ LINE...</div></div>
   <main id="dash" class="hidden">
     <div class="top"><div class="brand"><div class="brand-ico">🏃‍♀️</div><div><div class="brand-title">DTH Health</div><div class="muted">สุขภาพดีไปด้วยกัน</div></div></div><img id="mini" class="avatar-mini"></div>
-    <section class="card hero"><div class="profile"><img id="avatar" class="avatar"><div><h2 id="name">ผู้ใช้งาน</h2><div id="dept" class="muted">เจ้าหน้าที่โรงพยาบาลดอนตูม</div></div></div>
+    <section class="card hero"><div class="profile"><img id="avatar" class="avatar"><div><h2 id="name">ผู้ใช้งาน</h2><div id="dept" class="muted">พนักงานโรงพยาบาลดอนตูม</div></div></div>
       <div class="scoregrid"><div class="scorebox"><div class="muted">คะแนนสะสมทั้งหมด</div><div class="big" id="lifePts">0</div><div class="muted">คะแนนคงเหลือแลกรางวัล <span id="balPts">0</span></div></div><div class="scorebox rank"><div class="muted">อันดับกิจกรรม</div><div class="big">#<span id="rank">-</span></div><div class="muted">จาก <span id="people">0</span> คน</div></div></div>
     </section>
     <div class="section">กิจกรรมของฉัน</div><div class="stats"><div class="card stat">ทั้งหมด<b id="aAll">0</b></div><div class="card stat">รออนุมัติ<b id="aPend">0</b></div><div class="card stat">อนุมัติแล้ว<b id="aOk">0</b></div></div>
@@ -43,7 +45,7 @@
       <button class="mbtn wide" onclick="loadHistory()"><div class="mi">📋</div><b>ประวัติกิจกรรมของฉัน</b><small>ติดตามสถานะและคะแนน</small></button>
       <button id="adminBtn" class="mbtn adminbtn hidden" onclick="loadAdmin()"><div class="mi">⚙️</div><b>Admin Dashboard</b><small>ตรวจหลักฐาน อนุมัติคะแนน รางวัล</small></button>
     </div>
-    <div class="footer">DTH Health · Don Tum Hospital</div>
+    <div class="footer">DTH Health · Don Tum Hospital · v5 Staff</div>
   </main>
 </div>
 
@@ -53,7 +55,7 @@
 <script>
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
-let idToken="", evidenceData="", currentAction="", adminCache=null;
+let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
 let dashboardTimer=null;
 
 window.addEventListener("message",e=>{
@@ -66,7 +68,8 @@ window.addEventListener("message",e=>{
     renderDashboard(d.dashboard);
   }
   switch(d.action){
-    case "getMyActivities": renderHistory(d.activities||[]); break;
+    case "saveProfile": toast(d.message||"บันทึกข้อมูลแล้ว"); closeSheet(); break;
+        case "getMyActivities": renderHistory(d.activities||[]); break;
     case "saveHealth": renderHealth(d.health); toast(d.message||"บันทึกแล้ว"); break;
     case "getHealth": renderHealth(d.health); break;
     case "getRanking": renderRanking(d.ranking); break;
@@ -129,12 +132,88 @@ function openSheet(t,html){byId("sheetTitle").textContent=t;byId("sheetBody").in
 function closeSheet(){byId("sheet").classList.add("hidden")}
 function renderDashboard(d){
   byId("loading").classList.add("hidden");byId("dash").classList.remove("hidden");
-  byId("name").textContent=d.displayName||"ผู้ใช้งาน";byId("dept").textContent=d.department||"พนักงานโรงพยาบาลดอนตูม";
+  currentProfile={
+    firstName:String(d.firstName||""),
+    lastName:String(d.lastName||""),
+    age:d.age||"",
+    department:String(d.department||"")
+  };
+  const realName=(currentProfile.firstName+" "+currentProfile.lastName).trim();
+  byId("name").textContent=realName||d.displayName||"ผู้ใช้งาน";
+  const department=currentProfile.department.trim();
+  byId("dept").textContent=department||"เจ้าหน้าที่โรงพยาบาลดอนตูม";
+  const complete=Boolean(realName && currentProfile.age && department);
+  const peb=byId("profileEditBtn");
+  if(peb){
+    peb.textContent=complete?"✏️ แก้ไขข้อมูล":"⚠️ ตั้งค่าข้อมูล";
+    peb.classList.toggle("warn",!complete);
+  }
   byId("lifePts").textContent=Number(d.lifetimePoints||0).toLocaleString("th-TH");byId("balPts").textContent=Number(d.totalPoints||0).toLocaleString("th-TH");
   byId("rank").textContent=d.rank||"-";byId("people").textContent=d.participantCount||0;
   byId("aAll").textContent=d.activityCount||0;byId("aPend").textContent=d.pendingCount||0;byId("aOk").textContent=d.approvedCount||0;
   if(d.pictureUrl){byId("avatar").src=d.pictureUrl;byId("mini").src=d.pictureUrl}
   if(String(d.role||"").toLowerCase()==="admin")byId("adminBtn").classList.remove("hidden");
+}
+
+/* Staff profile */
+const DEPARTMENTS=[
+  "กลุ่มงานการแพทย์",
+  "กลุ่มงานทันตกรรม",
+  "กลุ่มงานเภสัชกรรมฯ",
+  "กลุ่มงานบริการด้านปฐมภูมิและองค์รวม",
+  "กลุ่มงานบริหารทั่วไป",
+  "กลุ่มงานการพยาบาล",
+  "กลุ่มงานโภชนศาสตร์",
+  "กลุ่มงานเทคนิคการแพทย์",
+  "กลุ่มงานเวชกรรมฟื้นฟู",
+  "กลุ่มงานจิตเวชและยาเสพติด",
+  "กลุ่มงานรังสีการแพทย์",
+  "กลุ่มงานประกันฯ",
+  "กลุ่มงานแพทย์แผนไทยฯ"
+];
+
+function openProfile(){
+  const options=DEPARTMENTS.map(x=>`<option value="${esc(x)}" ${x===currentProfile.department?"selected":""}>${esc(x)}</option>`).join("");
+  openSheet("👤 ข้อมูลเจ้าหน้าที่",`
+    <form onsubmit="saveProfile(event)">
+      <div class="two">
+        <div class="field">
+          <label>ชื่อ</label>
+          <input id="firstName" maxlength="80" value="${esc(currentProfile.firstName||"")}" required>
+        </div>
+        <div class="field">
+          <label>นามสกุล</label>
+          <input id="lastName" maxlength="80" value="${esc(currentProfile.lastName||"")}" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>อายุ (ปี)</label>
+        <input id="age" type="number" min="1" max="120" step="1" value="${esc(currentProfile.age||"")}" required>
+      </div>
+      <div class="field">
+        <label>กลุ่มงาน</label>
+        <select id="departmentSelect" required>
+          <option value="">— เลือกกลุ่มงาน —</option>
+          ${options}
+        </select>
+      </div>
+      <button class="btn primary">บันทึกข้อมูล</button>
+      <div class="note" style="margin-top:9px">ชื่อและกลุ่มงานจะแสดงใน Dashboard และ Ranking ส่วนอายุใช้เป็นข้อมูลโปรไฟล์ของเจ้าหน้าที่</div>
+    </form>
+  `);
+}
+
+function saveProfile(e){
+  e.preventDefault();
+  const department=byId("departmentSelect").value;
+  const firstName=byId("firstName").value.trim();
+  const lastName=byId("lastName").value.trim();
+  const age=byId("age").value;
+  if(!firstName||!lastName||!age||!department){
+    toast("กรุณากรอกข้อมูลให้ครบ");
+    return;
+  }
+  send("saveProfile",{department,firstName,lastName,age});
 }
 
 /* Activity */
