@@ -54,13 +54,17 @@
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
 let idToken="", evidenceData="", currentAction="", adminCache=null;
+let dashboardTimer=null;
 
 window.addEventListener("message",e=>{
-  if(!/^https:\/\/script\.google(?:usercontent)?\.com$/.test(e.origin)) return;
+  if(!(e.origin==="https://script.google.com" || /^https:\/\/(?:[a-z0-9-]+\.)*googleusercontent\.com$/i.test(e.origin))) return;
   const m=e.data;if(!m||m.source!=="DTH_HEALTH_BACKEND") return;
   const d=m.payload||{};
   if(!d.ok){toast(d.message||"เกิดข้อผิดพลาด");return;}
-  if(d.dashboard) renderDashboard(d.dashboard);
+  if(d.dashboard){
+    if(dashboardTimer){clearTimeout(dashboardTimer);dashboardTimer=null;}
+    renderDashboard(d.dashboard);
+  }
   switch(d.action){
     case "getMyActivities": renderHistory(d.activities||[]); break;
     case "saveHealth": renderHealth(d.health); toast(d.message||"บันทึกแล้ว"); break;
@@ -87,7 +91,27 @@ async function start(){
     byId("status").textContent="✅ เชื่อมต่อ LINE สำเร็จ กำลังโหลดข้อมูล...";
     byId("status").className="status ok";
     send("getDashboard",{});
+    dashboardTimer=setTimeout(()=>{
+      const s=byId("status");
+      if(!byId("dash").classList.contains("hidden")) return;
+      s.innerHTML='โหลดข้อมูลนานกว่าปกติ<br><button class="btn secondary" style="margin-top:8px" onclick="retryDashboard()">ลองใหม่</button>';
+      s.className="status err";
+    },12000);
   }catch(err){byId("status").textContent="❌ "+(err.message||err);byId("status").className="status err";}
+}
+
+function retryDashboard(){
+  if(dashboardTimer){clearTimeout(dashboardTimer);dashboardTimer=null;}
+  const s=byId("status");
+  s.textContent="กำลังโหลดข้อมูลอีกครั้ง...";
+  s.className="status ok";
+  send("getDashboard",{});
+  dashboardTimer=setTimeout(()=>{
+    if(byId("dash").classList.contains("hidden")){
+      s.textContent="ยังไม่ได้รับข้อมูลจาก Backend กรุณาตรวจ Apps Script deployment";
+      s.className="status err";
+    }
+  },12000);
 }
 
 function send(action,fields){
