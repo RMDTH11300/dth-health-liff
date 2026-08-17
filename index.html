@@ -2,17 +2,24 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
   <title>DTH Health</title>
 
+  <!-- LINE LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial, "Noto Sans Thai", sans-serif;
       background: #f4f7f5;
       color: #1f2937;
     }
@@ -24,7 +31,7 @@
     }
 
     .card {
-      background: #fff;
+      background: white;
       border-radius: 24px;
       padding: 28px 22px;
       margin-top: 38px;
@@ -38,9 +45,10 @@
 
     h1 {
       margin: 8px 0 4px;
+      font-size: 30px;
     }
 
-    .sub {
+    .subtitle {
       color: #6b7280;
       margin-bottom: 24px;
     }
@@ -50,6 +58,7 @@
       border-radius: 14px;
       background: #f3f4f6;
       color: #6b7280;
+      margin-bottom: 16px;
     }
 
     .success {
@@ -72,12 +81,29 @@
       border-radius: 50%;
       object-fit: cover;
       margin: 18px auto 8px;
-      border: 4px solid #ecfdf3;
+      border: 4px solid #dcfce7;
+      display: block;
     }
 
     #name {
       font-size: 22px;
       font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .message {
+      margin-top: 8px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .registered {
+      margin-top: 18px;
+      padding: 12px;
+      background: #f0fdf4;
+      border-radius: 12px;
+      color: #15803d;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -85,52 +111,89 @@
 <body>
 
 <div class="wrap">
+
   <div class="card">
 
     <div class="logo">🏃‍♀️</div>
 
     <h1>DTH Health</h1>
 
-    <div class="sub">
+    <div class="subtitle">
       Employee Health & Fitness
     </div>
 
-    <div id="status" class="status">
+    <div
+      id="status"
+      class="status"
+    >
       กำลังเชื่อมต่อ LINE...
     </div>
 
     <div id="profile">
 
-      <img id="avatar">
+      <img
+        id="avatar"
+        alt="LINE Profile"
+      >
 
       <div id="name"></div>
 
-      <p>
+      <div class="message">
         เชื่อมต่อ LINE สำเร็จ<br>
         พร้อมเข้าสู่ระบบ DTH Health
-      </p>
+      </div>
+
+      <div
+        id="registered"
+        class="registered"
+        style="display:none;"
+      >
+        ✅ ลงทะเบียนผู้ใช้งานเรียบร้อย
+      </div>
 
     </div>
 
   </div>
+
 </div>
+
+
+<!-- ใช้ iframe ซ่อน เพื่อส่งข้อมูลไป Apps Script โดยไม่ติด CORS -->
+<iframe
+  name="backendFrame"
+  id="backendFrame"
+  style="display:none;"
+></iframe>
 
 
 <script>
 
-const LIFF_ID = "2011115304-nt4j971c";
+const LIFF_ID =
+  "2011115304-nt4j971c";
+
+const BACKEND_URL =
+  "https://script.google.com/macros/s/AKfycbzDqZWX4px4H4AO2cyVub9UAdw5TNp1_Rx3Itusy8n-SDrWOFYUa0_aiClsDwp1jCJ7Mg/exec";
+
 
 async function startApp() {
 
-  const status = document.getElementById("status");
+  const status =
+    document.getElementById("status");
 
   try {
 
+    /*
+      1. เริ่ม LIFF
+    */
     await liff.init({
       liffId: LIFF_ID,
       withLoginOnExternalBrowser: true
     });
 
+
+    /*
+      2. ถ้ายังไม่ Login
+    */
     if (!liff.isLoggedIn()) {
 
       liff.login({
@@ -140,7 +203,30 @@ async function startApp() {
       return;
     }
 
-    const profile = await liff.getProfile();
+
+    /*
+      3. ดึงข้อมูล Profile
+    */
+    const profile =
+      await liff.getProfile();
+
+
+    /*
+      4. ดึง ID Token
+    */
+    const idToken =
+      liff.getIDToken();
+
+    if (!idToken) {
+      throw new Error(
+        "ไม่สามารถรับ LINE ID Token ได้"
+      );
+    }
+
+
+    /*
+      5. แสดง Profile
+    */
 
     status.textContent =
       "✅ เชื่อมต่อ LINE สำเร็จ";
@@ -148,33 +234,149 @@ async function startApp() {
     status.className =
       "status success";
 
-    document.getElementById("profile")
+    document
+      .getElementById("profile")
       .style.display = "block";
 
-    document.getElementById("name")
+
+    document
+      .getElementById("name")
       .textContent =
       profile.displayName || "ผู้ใช้งาน";
+
 
     const avatar =
       document.getElementById("avatar");
 
     if (profile.pictureUrl) {
-      avatar.src = profile.pictureUrl;
+
+      avatar.src =
+        profile.pictureUrl;
+
     } else {
-      avatar.style.display = "none";
+
+      avatar.style.display =
+        "none";
+
     }
+
+
+    /*
+      6. ส่ง ID Token ไป Backend
+    */
+
+    registerUser(idToken);
+
 
   } catch (err) {
 
+    console.error(err);
+
     status.textContent =
-      "เชื่อมต่อ LINE ไม่สำเร็จ: " +
-      err.message;
+      "เกิดข้อผิดพลาด: " +
+      (err.message || err);
 
     status.className =
       "status error";
 
   }
+
 }
+
+
+function registerUser(idToken) {
+
+  /*
+    สร้าง Form ชั่วคราว
+    ส่งแบบ POST เข้า Google Apps Script
+  */
+
+  const form =
+    document.createElement("form");
+
+  form.method =
+    "POST";
+
+  form.action =
+    BACKEND_URL;
+
+  form.target =
+    "backendFrame";
+
+  form.style.display =
+    "none";
+
+
+  /*
+    action
+  */
+
+  const actionInput =
+    document.createElement("input");
+
+  actionInput.type =
+    "hidden";
+
+  actionInput.name =
+    "action";
+
+  actionInput.value =
+    "registerUser";
+
+  form.appendChild(
+    actionInput
+  );
+
+
+  /*
+    LINE ID Token
+  */
+
+  const tokenInput =
+    document.createElement("input");
+
+  tokenInput.type =
+    "hidden";
+
+  tokenInput.name =
+    "idToken";
+
+  tokenInput.value =
+    idToken;
+
+  form.appendChild(
+    tokenInput
+  );
+
+
+  document.body.appendChild(
+    form
+  );
+
+
+  /*
+    ส่งข้อมูล
+  */
+
+  form.submit();
+
+
+  /*
+    ลบ Form หลังส่ง
+  */
+
+  setTimeout(() => {
+
+    form.remove();
+
+    document
+      .getElementById("registered")
+      .style.display = "block";
+
+  }, 1500);
+
+}
+
 
 startApp();
 
