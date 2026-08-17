@@ -74,7 +74,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_BUILD="prod-2026-08-17-inches";
+const APP_BUILD="prod-2026-08-17-healthsave";
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
 let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
@@ -82,6 +82,8 @@ let profilePromptShown=false;
 let dashboardTimer=null;
 let activitySubmitBusy=false;
 let activitySubmitStartedAt=0;
+let healthSaveBusy=false;
+let healthSaveStartedAt=0;
 let reviewBusy={};
 let activeReview=null;
 
@@ -92,6 +94,7 @@ window.addEventListener("message",e=>{
   if(!d.ok){
     if(activeReview) reviewFailed(d.message||"เกิดข้อผิดพลาด");
     if(currentAction==="submitActivity") activitySubmitFailed(d.message||"เกิดข้อผิดพลาด");
+    if(currentAction==="saveHealth") healthSaveFailed(d.message||"เกิดข้อผิดพลาด");
     toast(d.message||"เกิดข้อผิดพลาด");
     return;
   }
@@ -102,7 +105,9 @@ window.addEventListener("message",e=>{
   switch(d.action){
     case "saveProfile": toast(d.message||"บันทึกข้อมูลแล้ว"); closeSheet(); break;
         case "getMyActivities": renderHistory(d.activities||[]); break;
-    case "saveHealth": renderHealth(d.health); toast(d.message||"บันทึกแล้ว"); break;
+    case "saveHealth":
+      healthSaveSucceeded(d);
+      break;
     case "getHealth": renderHealth(d.health); break;
     case "getRanking": renderRanking(d.ranking); break;
     case "getRewards": renderRewards(d.rewards); break;
@@ -432,21 +437,85 @@ function renderHealth(x){
   if(l){h+=`<div class="healthgrid"><div class="metric">น้ำหนัก<strong>${l.weightKg} kg</strong></div><div class="metric">BMI<strong>${l.bmi}</strong></div><div class="metric">รอบเอว<strong>${(Number(l.waistCm||0)/2.54).toFixed(1)} นิ้ว</strong></div><div class="metric">เอว/สะโพก<strong>${l.whr}</strong></div></div><div class="note" style="margin-top:8px">BMI: ${esc(x.bmiStatus||"")} · ช่วงอ้างอิง ${esc(x.bmiReference||"")}</div>`;
     if(x.changes)h+=`<div class="card item" style="margin-top:9px"><b>การเปลี่ยนแปลงจากครั้งแรก</b><div class="muted">น้ำหนัก ${x.changes.weightKg>=0?"+":""}${x.changes.weightKg} kg · รอบเอว ${(Number(x.changes.waistCm||0)/2.54)>=0?"+":""}${(Number(x.changes.waistCm||0)/2.54).toFixed(1)} นิ้ว · BMI ${x.changes.bmi>=0?"+":""}${x.changes.bmi}</div></div>`;
   }else h+=`<div class="muted">ยังไม่มีข้อมูลสุขภาพ</div>`;
-  h+=`<div class="section">บันทึกข้อมูลใหม่</div><form onsubmit="saveHealth(event)"><div class="two"><div class="field"><label>น้ำหนัก (kg)</label><input id="wt" type="number" step=".1" required></div><div class="field"><label>ส่วนสูง (cm)</label><input id="ht" type="number" step=".1" required></div></div><div class="two"><div class="field"><label>รอบเอว (นิ้ว)</label><input id="wa" type="number" step=".1" min="1" required></div><div class="field"><label>รอบสะโพก (นิ้ว)</label><input id="hip" type="number" step=".1" min="1" required></div></div><div class="field"><label>วันที่</label><input id="hdate" type="date" required></div><button class="btn primary">บันทึกสุขภาพ</button></form><div class="note" style="margin-top:9px">ข้อมูลสุขภาพแสดงเฉพาะเจ้าของบัญชี ไม่ถูกนำไปจัดอันดับกับผู้อื่น</div>`;
+  h+=`<div class="section">บันทึกข้อมูลใหม่</div><form onsubmit="saveHealth(event)"><div class="two"><div class="field"><label>น้ำหนัก (kg)</label><input id="wt" type="number" step=".1" required></div><div class="field"><label>ส่วนสูง (cm)</label><input id="ht" type="number" step=".1" required></div></div><div class="two"><div class="field"><label>รอบเอว (นิ้ว)</label><input id="wa" type="number" step=".1" min="1" required></div><div class="field"><label>รอบสะโพก (นิ้ว)</label><input id="hip" type="number" step=".1" min="1" required></div></div><div class="field"><label>วันที่</label><input id="hdate" type="date" required></div><button id="healthSaveBtn" class="btn primary">บันทึกข้อมูลสุขภาพ</button>
+      <div id="healthSaveState" class="review-state"></div>
+    </form><div class="note" style="margin-top:9px">ข้อมูลสุขภาพแสดงเฉพาะเจ้าของบัญชี ไม่ถูกนำไปจัดอันดับกับผู้อื่น</div>`;
   byId("sheetBody").innerHTML=h;byId("hdate").value=new Date().toISOString().slice(0,10);
 }
 function saveHealth(e){
   e.preventDefault();
+
+  if(healthSaveBusy){
+    toast("กำลังบันทึกข้อมูลสุขภาพ กรุณารอสักครู่");
+    return;
+  }
+
   const waistIn=Number(byId("wa").value);
   const hipIn=Number(byId("hip").value);
-  if(!waistIn||!hipIn){toast("กรุณากรอกรอบเอวและรอบสะโพก");return}
+  if(!waistIn||!hipIn){
+    toast("กรุณากรอกรอบเอวและรอบสะโพก");
+    return;
+  }
+
+  healthSaveBusy=true;
+  healthSaveStartedAt=Date.now();
+
+  const btn=byId("healthSaveBtn");
+  const state=byId("healthSaveState");
+
+  if(btn){
+    btn.disabled=true;
+    btn.textContent="⏳ กำลังบันทึก...";
+  }
+  if(state){
+    state.className="review-state show busy";
+    state.innerHTML='<span class="review-spinner">⏳</span> กำลังบันทึกข้อมูลสุขภาพ...<br><span style="font-weight:500">กรุณารอ ไม่ต้องกดซ้ำ</span>';
+  }
+
   send("saveHealth",{
     weightKg:byId("wt").value,
     heightCm:byId("ht").value,
     waistCm:(waistIn*2.54).toFixed(2),
     hipCm:(hipIn*2.54).toFixed(2),
     recordDate:byId("hdate").value
-  })
+  });
+
+  setTimeout(()=>{
+    if(healthSaveBusy){
+      const s=byId("healthSaveState");
+      if(s){
+        s.className="review-state show busy";
+        s.innerHTML='<span class="review-spinner">⏳</span> ระบบยังอยู่ระหว่างบันทึก...<br><span style="font-weight:500">ไม่ต้องกดซ้ำ กรุณารอสักครู่</span>';
+      }
+    }
+  },8000);
+}
+
+function healthSaveSucceeded(d){
+  healthSaveBusy=false;
+  const elapsed=Math.max(1,Math.round((Date.now()-healthSaveStartedAt)/1000));
+  healthSaveStartedAt=0;
+
+  // Re-render latest health values and a fresh form
+  renderHealth(d.health);
+  toast(`✅ บันทึกข้อมูลสุขภาพเรียบร้อย (${elapsed} วินาที)`);
+}
+
+function healthSaveFailed(message){
+  healthSaveBusy=false;
+  healthSaveStartedAt=0;
+
+  const btn=byId("healthSaveBtn");
+  const state=byId("healthSaveState");
+
+  if(btn){
+    btn.disabled=false;
+    btn.textContent="บันทึกข้อมูลสุขภาพ";
+  }
+  if(state){
+    state.className="review-state show error";
+    state.textContent="บันทึกไม่สำเร็จ: "+(message||"เกิดข้อผิดพลาด")+" — สามารถกดบันทึกใหม่ได้";
+  }
 }
 
 /* Ranking */
