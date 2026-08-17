@@ -34,6 +34,10 @@
 .review-card button:disabled{opacity:.48;cursor:not-allowed}
 .review-spinner{display:inline-block;animation:spin .8s linear infinite;margin-right:5px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.evidence-viewer{position:fixed;inset:0;background:rgba(8,14,11,.82);z-index:180;display:flex;align-items:center;justify-content:center;padding:16px}
+.evidence-box{position:relative;width:min(620px,100%);max-height:92vh;background:#fff;border-radius:18px;padding:12px;display:flex;align-items:center;justify-content:center}
+.evidence-box img{width:100%;max-height:84vh;object-fit:contain;border-radius:12px}
+.evidence-close{position:absolute;top:8px;right:8px;width:40px;height:40px;border:0;border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:24px;line-height:1;cursor:pointer;z-index:2}
 .footer{text-align:center;color:#9ba49f;font-size:12px;margin-top:24px}
 </style>
 </head>
@@ -55,12 +59,19 @@
       <button class="mbtn wide" onclick="loadHistory()"><div class="mi">📋</div><b>ประวัติกิจกรรมของฉัน</b><small>ติดตามสถานะและคะแนน</small></button>
       <button id="adminBtn" class="mbtn adminbtn hidden" onclick="loadAdmin()"><div class="mi">⚙️</div><b>Admin Dashboard</b><small>ตรวจหลักฐาน อนุมัติคะแนน รางวัล</small></button>
     </div>
-    <div class="footer">DTH Health · Don Tum Hospital · v8 Fast Submit</div>
+    <div class="footer">DTH Health · Don Tum Hospital · v9 Evidence Return</div>
   </main>
 </div>
 
 <div id="sheet" class="sheet hidden"><div class="sheetbox"><div class="sheethead"><h3 id="sheetTitle"></h3><button class="close" onclick="closeSheet()">×</button></div><div id="sheetBody"></div></div></div>
-<iframe name="backendFrame" style="display:none"></iframe><div id="toast" class="toast"></div>
+<iframe name="backendFrame" style="display:none"></iframe>
+<div id="evidenceViewer" class="evidence-viewer hidden" onclick="closeEvidence(event)">
+  <div class="evidence-box" onclick="event.stopPropagation()">
+    <button class="evidence-close" onclick="closeEvidence(event)">×</button>
+    <img id="evidenceImg" alt="หลักฐานกิจกรรม">
+  </div>
+</div>
+<div id="toast" class="toast"></div>
 
 <script>
 const LIFF_ID="2011115304-nt4j971c";
@@ -456,7 +467,20 @@ function evidence(id){
   if(reviewBusy[id]){toast("รายการนี้กำลังบันทึกสถานะ กรุณารอสักครู่");return}
   send("adminGetEvidence",{activityId:id})
 }
-function showEvidence(src){openSheet("🖼️ หลักฐาน",`<img src="${src}" style="width:100%;max-height:75vh;object-fit:contain;border-radius:14px">`)}
+function showEvidence(src){
+  const viewer=byId("evidenceViewer");
+  const img=byId("evidenceImg");
+  if(!viewer||!img)return;
+  img.src=src;
+  viewer.classList.remove("hidden");
+}
+function closeEvidence(e){
+  if(e)e.stopPropagation();
+  const viewer=byId("evidenceViewer");
+  const img=byId("evidenceImg");
+  if(viewer)viewer.classList.add("hidden");
+  if(img)img.src="";
+}
 
 function setReviewButtons(id,disabled){
   ["evidence_","approve_","reject_"].forEach(prefix=>{
