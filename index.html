@@ -20,6 +20,14 @@
 .list{display:grid;gap:9px}.item{padding:14px}.itemtop{display:flex;justify-content:space-between;gap:10px}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px}.pending{background:#fff4d8;color:#8a6200}.approved{background:#e8f8ed;color:#147a3e}.rejected{background:#fff0f1;color:#ad2134}.completed{background:#e9f2ff;color:#235ea7}
 .rankrow{display:grid;grid-template-columns:38px 44px 1fr auto;gap:9px;align-items:center;padding:11px 4px;border-bottom:1px solid #edf0ef}.rankrow img{width:40px;height:40px;border-radius:50%;object-fit:cover}.me{background:#effbf3;border-radius:12px}
 .healthgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{padding:12px;background:#f6f9f7;border-radius:13px}.metric strong{display:block;font-size:20px;margin-top:3px}
+.health-interpret{margin-top:10px;display:grid;gap:8px}
+.health-result{padding:12px 13px;border-radius:14px;background:#f7f9f8;border:1px solid #e7ece9}
+.health-result strong{display:block;margin-bottom:4px}
+.health-result .value{font-size:17px;font-weight:800}
+.health-result.ok{background:#eef9f1;border-color:#d4eedb;color:#166534}
+.health-result.warn{background:#fff7e7;border-color:#f5e2ac;color:#8a6200}
+.health-result.high{background:#fff0f1;border-color:#f2d0d5;color:#9f2032}
+.health-ref{font-size:12px;color:#6f7c76;line-height:1.55;margin-top:4px}
 .reward{padding:14px}.reward h4{margin:0 0 5px}.balance{padding:13px;background:#effbf3;border-radius:14px;margin-bottom:10px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#16231e;color:#fff;padding:11px 16px;border-radius:13px;opacity:0;transition:.25s;z-index:200;max-width:90%;text-align:center}.toast.show{opacity:1}
 .adminstats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.adminstat{padding:13px;background:#f7f9f8;border-radius:13px}.adminstat b{font-size:23px;display:block}
@@ -74,7 +82,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_BUILD="prod-2026-08-17-healthsave";
+const APP_BUILD="prod-2026-08-17-health-interpret";
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
 let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
@@ -432,9 +440,52 @@ function renderHistory(rows){
 
 /* Health */
 function openHealth(){openSheet("❤️ สุขภาพของฉัน","<div class='muted'>กำลังโหลด...</div>");send("getHealth",{})}
+function bmiInterpretation(bmi){
+  const v=Number(bmi||0);
+  if(!v)return {label:"ไม่มีข้อมูล",cls:""};
+  if(v<18.5)return {label:"น้ำหนักต่ำกว่าเกณฑ์",cls:"warn"};
+  if(v<23)return {label:"สมส่วน",cls:"ok"};
+  if(v<25)return {label:"น้ำหนักเกิน",cls:"warn"};
+  if(v<30)return {label:"อ้วนระดับ 1",cls:"high"};
+  return {label:"อ้วนระดับ 2",cls:"high"};
+}
+
+function whrInterpretation(whr){
+  const v=Number(whr||0);
+  if(!v)return {label:"ไม่มีข้อมูล",cls:""};
+  if(v<=0.85){
+    return {label:"ยังไม่เกินเกณฑ์ความเสี่ยงสูงทั้งเกณฑ์ชายและหญิง",cls:"ok"};
+  }
+  if(v<=0.90){
+    return {label:"ชาย: ยังไม่เกินเกณฑ์ · หญิง: เกินเกณฑ์ความเสี่ยงสูง",cls:"warn"};
+  }
+  return {label:"เกินเกณฑ์ความเสี่ยงสูงทั้งเกณฑ์ชายและหญิง",cls:"high"};
+}
+
 function renderHealth(x){
   const l=x&&x.latest;let h="";
-  if(l){h+=`<div class="healthgrid"><div class="metric">น้ำหนัก<strong>${l.weightKg} kg</strong></div><div class="metric">BMI<strong>${l.bmi}</strong></div><div class="metric">รอบเอว<strong>${(Number(l.waistCm||0)/2.54).toFixed(1)} นิ้ว</strong></div><div class="metric">เอว/สะโพก<strong>${l.whr}</strong></div></div><div class="note" style="margin-top:8px">BMI: ${esc(x.bmiStatus||"")} · ช่วงอ้างอิง ${esc(x.bmiReference||"")}</div>`;
+  if(l){
+    const bmiInfo=bmiInterpretation(l.bmi);
+    const whrInfo=whrInterpretation(l.whr);
+    h+=`<div class="healthgrid">
+      <div class="metric">น้ำหนัก<strong>${l.weightKg} kg</strong></div>
+      <div class="metric">BMI<strong>${l.bmi}</strong></div>
+      <div class="metric">รอบเอว<strong>${(Number(l.waistCm||0)/2.54).toFixed(1)} นิ้ว</strong></div>
+      <div class="metric">เอว/สะโพก<strong>${l.whr}</strong></div>
+    </div>
+    <div class="health-interpret">
+      <div class="health-result ${bmiInfo.cls}">
+        <strong>การแปลผล BMI</strong>
+        <div class="value">${esc(bmiInfo.label)}</div>
+        <div class="health-ref">เกณฑ์วัยทำงาน: &lt;18.5 ต่ำกว่าเกณฑ์ · 18.5–22.9 สมส่วน · 23.0–24.9 น้ำหนักเกิน · 25.0–29.9 อ้วนระดับ 1 · ≥30 อ้วนระดับ 2</div>
+      </div>
+      <div class="health-result ${whrInfo.cls}">
+        <strong>การแปลผลอัตราส่วนเอวต่อสะโพก (WHR)</strong>
+        <div class="value">${esc(whrInfo.label)}</div>
+        <div class="health-ref">เกณฑ์ความเสี่ยงสูง: ชาย &gt;0.90 · หญิง &gt;0.85</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:9px">ใช้เป็นการคัดกรองสุขภาพเบื้องต้น ไม่ใช่การวินิจฉัยโรค</div>`;
     if(x.changes)h+=`<div class="card item" style="margin-top:9px"><b>การเปลี่ยนแปลงจากครั้งแรก</b><div class="muted">น้ำหนัก ${x.changes.weightKg>=0?"+":""}${x.changes.weightKg} kg · รอบเอว ${(Number(x.changes.waistCm||0)/2.54)>=0?"+":""}${(Number(x.changes.waistCm||0)/2.54).toFixed(1)} นิ้ว · BMI ${x.changes.bmi>=0?"+":""}${x.changes.bmi}</div></div>`;
   }else h+=`<div class="muted">ยังไม่มีข้อมูลสุขภาพ</div>`;
   h+=`<div class="section">บันทึกข้อมูลใหม่</div><form onsubmit="saveHealth(event)"><div class="two"><div class="field"><label>น้ำหนัก (kg)</label><input id="wt" type="number" step=".1" required></div><div class="field"><label>ส่วนสูง (cm)</label><input id="ht" type="number" step=".1" required></div></div><div class="two"><div class="field"><label>รอบเอว (นิ้ว)</label><input id="wa" type="number" step=".1" min="1" required></div><div class="field"><label>รอบสะโพก (นิ้ว)</label><input id="hip" type="number" step=".1" min="1" required></div></div><div class="field"><label>วันที่</label><input id="hdate" type="date" required></div><button id="healthSaveBtn" class="btn primary">บันทึกข้อมูลสุขภาพ</button>
