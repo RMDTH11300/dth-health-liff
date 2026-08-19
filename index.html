@@ -66,7 +66,16 @@
 
     <div class="score-note card">
       <div class="score-note-title">ℹ️ เกณฑ์คะแนนกิจกรรม DTH Health</div>
-      <div class="note">คิดคะแนนจาก <b>ระยะเวลาที่ทำกิจกรรม</b> และระดับความหนักโดยประมาณ เพื่อให้กิจกรรมหลายรูปแบบเปรียบเทียบกันได้</div>
+      <div class="note">
+        เกณฑ์คะแนนประยุกต์แนวคิด <b>MET-minutes</b> ตามกรอบการประเมินกิจกรรมทางกายของ WHO (GPAQ)
+        โดยพิจารณา <b>ความหนักของกิจกรรม (MET) × ระยะเวลา (นาที)</b>
+        แล้วแปลงให้อยู่ในรูปคะแนนของโครงการ เพื่อให้กิจกรรมต่างประเภทสามารถเปรียบเทียบกันได้ง่ายขึ้น
+      </div>
+      <div class="note" style="margin-top:7px">
+        WHO GPAQ ใช้ค่ามาตรฐานโดยประมาณ <b>4 MET สำหรับกิจกรรมระดับปานกลาง</b>
+        และ <b>8 MET สำหรับกิจกรรมระดับหนัก</b> ส่วนกิจกรรมเฉพาะชนิดใช้ค่า MET อ้างอิงจาก
+        <b>2024 Adult Compendium of Physical Activities</b> ก่อนนำมาปรับเป็นอัตราคะแนนที่เหมาะกับโครงการ
+      </div>
       <div class="score-note-grid">
         <span class="score-chip">🚶 เดิน 1 คะแนน/นาที</span>
         <span class="score-chip">🏃 วิ่ง 2 คะแนน/นาที</span>
@@ -77,7 +86,12 @@
         <span class="score-chip">🥾 เดินป่า 1.5 คะแนน/นาที</span>
         <span class="score-chip">🏊 ว่ายน้ำ 1.5 คะแนน/นาที</span>
       </div>
-      <div class="note"><b>จำกัดคะแนนสูงสุด 60 คะแนน/วัน และ 300 คะแนน/สัปดาห์</b> เพื่อเน้นความสม่ำเสมอมากกว่าการทำกิจกรรมหนักเพื่อสะสมคะแนน คะแนนนี้เป็นเกณฑ์ของโครงการ ไม่ใช่คะแนนมาตรฐานของ WHO</div>
+      <div class="note">
+        <b>จำกัดคะแนนสูงสุด 60 คะแนน/วัน และ 300 คะแนน/สัปดาห์</b>
+        เพื่อส่งเสริมความสม่ำเสมอในการออกกำลังกาย มากกว่าการเร่งทำกิจกรรมเพื่อสะสมคะแนน
+        ทั้งนี้ “คะแนน DTH Health” เป็นคะแนนที่โครงการกำหนดขึ้นโดยประยุกต์จากแนวคิด MET-minutes
+        ไม่ใช่คะแนนมาตรฐานที่ WHO กำหนดโดยตรง
+      </div>
     </div>
 
     <div class="section">เมนูหลัก</div>
@@ -104,7 +118,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_BUILD="prod-2026-08-19-projectscore16";
+const APP_BUILD="prod-2026-08-19-projectscore16-who-note";
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
 let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
