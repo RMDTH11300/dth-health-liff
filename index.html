@@ -88,16 +88,210 @@
 .evidence-box img{width:100%;max-height:84vh;object-fit:contain;border-radius:12px}
 .evidence-close{position:absolute;top:8px;right:8px;width:40px;height:40px;border:0;border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:24px;line-height:1;cursor:pointer;z-index:2}
 .footer{text-align:center;color:#9ba49f;font-size:12px;margin-top:24px}
+
+/* ===== v18.1 Mockup-matched UI ===== */
+.app{max-width:600px;margin:auto;min-height:100vh;padding:0 14px 40px}
+.app-header{
+  margin:0 -14px 14px;
+  padding:14px 16px 13px;
+  background:linear-gradient(135deg,#229746,#4aae61);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:0 4px 16px rgba(31,125,65,.20)
+}
+.header-brand{font-size:20px;font-weight:800;letter-spacing:.1px}
+.app-header .avatar-mini{border-color:rgba(255,255,255,.88)}
+.welcome-card{padding:14px 15px;margin-bottom:11px}
+.welcome-card .profile{align-items:center}
+.welcome-card .avatar{width:54px;height:54px}
+.welcome-card h2{font-size:20px;margin:0 0 3px}
+.quickstats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  margin:0 0 15px
+}
+.quickstat{
+  background:#fff;
+  border-radius:16px;
+  padding:12px 7px 11px;
+  text-align:center;
+  box-shadow:0 5px 17px rgba(0,0,0,.06);
+  min-width:0
+}
+.quickstat .qs-ico{font-size:22px;line-height:1}
+.quickstat small{display:block;color:#6f7c76;margin-top:5px;font-size:11px}
+.quickstat b{display:block;font-size:24px;margin-top:2px;color:#173d2c}
+.quickstat .qs-sub{font-size:10px;color:#8a9690;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats{
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  gap:0;
+  box-shadow:0 5px 17px rgba(0,0,0,.05)
+}
+.stats .stat{
+  border-radius:0;
+  box-shadow:none;
+  border-right:1px solid #edf0ee;
+  padding:12px 4px
+}
+.stats .stat:last-child{border-right:0}
+.personal-health{
+  border:1.5px solid #66b977;
+  box-shadow:0 6px 21px rgba(34,151,70,.08);
+  padding:14px
+}
+.personal-health-head{align-items:center}
+.personal-health-title{font-size:16px;color:#1d6c39}
+.personal-health-date{font-size:11px}
+.health-summary-4{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-top:10px
+}
+.health-mini{
+  min-width:0;
+  padding:10px 5px;
+  border:1px solid #e6ece8;
+  background:#fff;
+  border-radius:12px;
+  text-align:center
+}
+.health-mini small{display:block;font-size:10px;color:#6e7974;white-space:nowrap}
+.health-mini b{display:block;font-size:18px;margin-top:3px;color:#1c2c25}
+.health-mini .mini-status{font-size:9px;line-height:1.25;margin-top:3px;min-height:22px}
+.health-mini.good .mini-status{color:#198044}
+.health-mini.warn .mini-status{color:#c56a16}
+.health-mini.bad .mini-status{color:#bd3447}
+.mock-progress{
+  margin-top:10px;
+  padding:12px;
+  background:#f7faf8;
+  border:1px solid #e2e9e5;
+  border-radius:13px
+}
+.mock-progress-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-weight:800
+}
+.mock-progress-title span:last-child{white-space:nowrap}
+.mock-progress-bar{
+  height:9px;background:#e3e8e5;border-radius:999px;overflow:hidden;margin:8px 0 6px
+}
+.mock-progress-bar span{height:100%;display:block;border-radius:999px;background:#168446}
+.mock-progress-sub{font-size:12px;color:#58645e;line-height:1.45}
+.mock-who{margin-top:10px}
+.personal-health-actions{margin-top:11px}
+.personal-health-actions .btn{padding:11px 9px;font-size:13px}
+.mbtn{min-height:98px}
+.mbtn.wide{min-height:auto}
+.health-detail-top{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin-bottom:11px
+}
+.health-detail-metric{
+  padding:11px 5px;
+  border-radius:13px;
+  border:1px solid #e5ebe7;
+  background:#fafcfb;
+  text-align:center;
+  min-width:0
+}
+.health-detail-metric small{display:block;font-size:10px;color:#6f7b75}
+.health-detail-metric b{display:block;font-size:20px;margin-top:4px}
+.health-detail-metric .health-detail-status{font-size:9px;line-height:1.25;margin-top:4px}
+.health-assessment-box{
+  background:#f1f9f2;
+  border:1px solid #d6ead9;
+  border-radius:16px;
+  padding:13px;
+  margin-top:10px
+}
+.assessment-layout{
+  display:grid;
+  grid-template-columns:96px 1fr;
+  gap:10px;
+  align-items:stretch
+}
+.assessment-score{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#fff;
+  border:1px solid #dce9df;
+  border-radius:13px;
+  padding:10px
+}
+.assessment-score b{font-size:29px;color:#176837}
+.assessment-score small{text-align:center;color:#627069}
+.assessment-criteria{display:grid;gap:6px}
+.assessment-criterion{
+  display:flex;gap:7px;align-items:flex-start;
+  padding:8px 9px;border-radius:10px;background:#fff;border:1px solid #e2eae5;
+  font-size:12px;line-height:1.35
+}
+.assessment-criterion.pass{color:#176b39;border-color:#cfe7d6;background:#f8fcf9}
+.detail-section-title{font-size:15px;font-weight:800;margin:17px 2px 8px;color:#1a4c34}
+.trend-wrap{gap:9px}
+.trend-card{padding:10px 11px;border-radius:13px;background:#fff}
+.trend-title{font-size:13px}
+.trend-sub{font-size:10px}
+.followup-box{background:#f1f9f2;border:1px solid #d7eadb}
+@media(max-width:390px){
+  .health-summary-4,.health-detail-top{grid-template-columns:repeat(2,1fr)}
+  .assessment-layout{grid-template-columns:1fr}
+  .quickstat b{font-size:21px}
+}
+
 </style>
 </head>
 <body>
 <div class="app">
   <div id="loading" class="card loading"><div class="ico">🏃‍♀️</div><h1>DTH Health</h1><div class="muted">Employee Health & Fitness</div><div id="status" class="status">กำลังเชื่อมต่อ LINE...</div></div>
   <main id="dash" class="hidden">
-    <div class="top"><div class="brand"><div class="brand-ico">🏃‍♀️</div><div><div class="brand-title">DTH Health</div><div class="muted">สุขภาพดีไปด้วยกัน</div></div></div><img id="mini" class="avatar-mini"></div>
-    <section class="card hero"><div class="profile"><img id="avatar" class="avatar"><div><h2 id="name">ผู้ใช้งาน</h2><div id="dept" class="muted">เจ้าหน้าที่โรงพยาบาลดอนตูม</div><button id="profileEditBtn" class="profile-edit warn" onclick="openProfile()">⚠️ ตั้งค่าข้อมูล</button></div></div>
-      <div class="scoregrid"><div class="scorebox"><div class="muted">คะแนนสะสมทั้งหมด</div><div class="big" id="lifePts">0</div><div class="muted">คะแนนคงเหลือแลกรางวัล <span id="balPts">0</span></div></div><div class="scorebox rank"><div class="muted">อันดับกิจกรรม</div><div class="big">#<span id="rank">-</span></div><div class="muted">จาก <span id="people">0</span> คน</div></div></div>
+    <div class="app-header"><div class="header-brand">DTH Health Challenge</div><img id="mini" class="avatar-mini"></div>
+
+    <section class="card welcome-card">
+      <div class="profile">
+        <img id="avatar" class="avatar">
+        <div style="flex:1">
+          <h2>สวัสดี <span id="name">ผู้ใช้งาน</span> 💚</h2>
+          <div id="dept" class="muted">เจ้าหน้าที่โรงพยาบาลดอนตูม</div>
+          <button id="profileEditBtn" class="profile-edit warn" onclick="openProfile()">⚠️ ตั้งค่าข้อมูล</button>
+        </div>
+      </div>
     </section>
+
+    <div class="quickstats">
+      <div class="quickstat">
+        <div class="qs-ico">🌟</div>
+        <small>คะแนนสะสม</small>
+        <b id="lifePts">0</b>
+        <div class="qs-sub">คงเหลือ <span id="balPts">0</span></div>
+      </div>
+      <div class="quickstat">
+        <div class="qs-ico">🏆</div>
+        <small>อันดับ</small>
+        <b>#<span id="rank">-</span></b>
+        <div class="qs-sub">จาก <span id="people">0</span> คน</div>
+      </div>
+      <div class="quickstat">
+        <div class="qs-ico">🗓️</div>
+        <small>กิจกรรมสัปดาห์นี้</small>
+        <b id="weekSessions">0</b>
+        <div class="qs-sub">รายการอนุมัติ</div>
+      </div>
+    </div>
     <div class="section">กิจกรรมของฉัน</div><div class="stats"><div class="card stat">ทั้งหมด<b id="aAll">0</b></div><div class="card stat">รออนุมัติ<b id="aPend">0</b></div><div class="card stat">อนุมัติแล้ว<b id="aOk">0</b></div></div>
 
     <div class="section">ผลสุขภาพของฉัน</div>
@@ -130,7 +324,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_BUILD="prod-2026-08-19-personalhealth18";
+const APP_BUILD="prod-2026-08-19-personalhealth18-mockup";
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
 let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
@@ -329,23 +523,27 @@ function renderPersonalHealthOverview(h){
   const box=byId("personalHealthCard");
   if(!box)return;
 
+  const weeklySessions=Number(h&&h.weeklySessions||0);
+  const weekEl=byId("weekSessions");
+  if(weekEl)weekEl.textContent=weeklySessions;
+
   if(!h||!h.hasData){
     const who=Number(h&&h.whoEquivalentMinutes||0);
     const whoPct=Math.min(100,Math.round((who/150)*100));
     box.innerHTML=`
       <div class="personal-health-head">
         <div>
-          <div class="personal-health-title">❤️ เริ่มติดตามสุขภาพของคุณ</div>
-          <div class="personal-health-date">บันทึกครั้งแรกเพื่อสร้าง Baseline</div>
+          <div class="personal-health-title">💚 ผลสุขภาพของฉัน</div>
+          <div class="personal-health-date">ยังไม่มี Baseline สุขภาพ</div>
         </div>
       </div>
-      <div class="personal-progress wait">
-        <b>กิจกรรมทางกาย 7 วันล่าสุด ${who}/150 นาทีเทียบเท่า WHO</b>
-        <div class="personal-progress-bar"><span style="width:${whoPct}%"></span></div>
-        <div class="muted">ใช้เพื่อดูความต่อเนื่องของกิจกรรม ไม่ใช่การวินิจฉัยสุขภาพ</div>
+      <div class="mock-progress">
+        <div class="mock-progress-title"><span>กิจกรรมทางกายรายสัปดาห์</span><span>${whoPct}%</span></div>
+        <div class="mock-progress-bar"><span style="width:${whoPct}%"></span></div>
+        <div class="mock-progress-sub">${who}/150 นาทีเทียบเท่า WHO</div>
       </div>
       <div class="personal-health-actions">
-        <button class="btn primary" onclick="openHealth()">บันทึกข้อมูลสุขภาพ</button>
+        <button class="btn primary" onclick="openHealth()">＋ บันทึกข้อมูลสุขภาพ</button>
       </div>`;
     return;
   }
@@ -354,67 +552,66 @@ function renderPersonalHealthOverview(h){
   const whtrInfo=whtrInterpretation(h.whtr);
   const who=Number(h.whoEquivalentMinutes||0);
   const whoPct=Math.min(100,Math.round((who/150)*100));
+  const projectPct=h.assessable?Number(h.passProgressPct||0):0;
+  const remain=h.assessable?Number(h.remainingPctToPass||0):100;
 
-  let progressClass="wait";
-  let progressTitle="รอข้อมูลติดตามครั้งถัดไป";
-  let progressText="ต้องมีข้อมูลสุขภาพอย่างน้อย 2 ครั้งจึงจะประเมินผลลัพธ์สุขภาพได้";
-  let projectPct=0;
-
+  let projectTitle="รอข้อมูลติดตาม";
+  let projectText="บันทึกข้อมูลสุขภาพครั้งถัดไปเพื่อประเมินการเปลี่ยนแปลง";
   if(h.assessable){
-    projectPct=Number(h.passProgressPct||0);
     if(h.healthImproved){
-      progressClass="good";
-      progressTitle="✅ ผ่านเกณฑ์สุขภาพดีขึ้นของโครงการ";
-      progressText=`ผ่าน ${h.assessmentScore}/3 ด้าน`;
+      projectTitle="✅ ผ่านเกณฑ์สุขภาพดีขึ้น";
+      projectText=`ผ่าน ${h.assessmentScore}/3 ด้าน · ถึงเกณฑ์โครงการแล้ว`;
     }else{
-      progressTitle=`📊 ความก้าวหน้าสู่เกณฑ์ ${projectPct}%`;
-      progressText=`เหลืออีก ${Number(h.remainingPctToPass||0)}% จึงจะถึงเกณฑ์โครงการ · ต้องผ่านเพิ่ม ${Number(h.criteriaNeededToPass||0)} ด้าน`;
+      projectTitle=`📈 ความก้าวหน้าสู่เกณฑ์ ${projectPct}%`;
+      projectText=`เหลืออีก ${remain}% จึงจะผ่านเกณฑ์โครงการ · ต้องผ่านเพิ่ม ${Number(h.criteriaNeededToPass||0)} ด้าน`;
     }
   }
+
+  const bmiClass=bmiInfo.cls==="ok"?"good":bmiInfo.cls==="high"?"bad":"warn";
+  const whtrClass=whtrInfo.cls==="ok"?"good":whtrInfo.cls==="high"?"bad":"warn";
 
   box.innerHTML=`
     <div class="personal-health-head">
       <div>
-        <div class="personal-health-title">❤️ สรุปสุขภาพล่าสุด</div>
-        <div class="personal-health-date">ข้อมูลล่าสุด ${esc(h.latestDate||"-")}</div>
+        <div class="personal-health-title">💚 ผลสุขภาพของฉัน</div>
+        <div class="personal-health-date">อัปเดตล่าสุด ${esc(h.latestDate||"-")}</div>
       </div>
-      <span class="badge ${h.whoTargetMet?"approved":"pending"}">${h.whoTargetMet?"ถึงเกณฑ์ WHO":"ติดตามต่อ"}</span>
     </div>
 
-    <div class="personal-health-grid">
-      <div class="personal-health-metric">
+    <div class="health-summary-4">
+      <div class="health-mini ${bmiClass}">
         <small>BMI</small>
         <b>${Number(h.bmi||0).toFixed(1)}</b>
-        <div class="muted">${esc(bmiInfo.label)}</div>
+        <div class="mini-status">${esc(bmiInfo.label)}</div>
       </div>
-      <div class="personal-health-metric">
-        <small>WHtR เอว/ส่วนสูง</small>
+      <div class="health-mini ${whtrClass}">
+        <small>WHtR</small>
         <b>${Number(h.whtr||0).toFixed(2)}</b>
-        <div class="muted">${esc(whtrInfo.label)}</div>
+        <div class="mini-status">${esc(whtrInfo.label)}</div>
       </div>
-      <div class="personal-health-metric">
+      <div class="health-mini">
         <small>กิจกรรม 7 วัน</small>
         <b>${who}/150</b>
-        <div class="muted">นาทีเทียบเท่า WHO</div>
+        <div class="mini-status">นาทีเทียบเท่า WHO</div>
       </div>
-      <div class="personal-health-metric">
-        <small>ผลลัพธ์สุขภาพ</small>
-        <b>${h.assessable?`${h.assessmentScore}/3`:"รอติดตาม"}</b>
-        <div class="muted">เกณฑ์โครงการ</div>
+      <div class="health-mini">
+        <small>ผลสุขภาพ</small>
+        <b>${h.assessable?`${h.assessmentScore}/3`:"—"}</b>
+        <div class="mini-status">${h.assessable?"เกณฑ์โครงการ":"รอติดตาม"}</div>
       </div>
     </div>
 
-    <div class="personal-progress ${progressClass}">
-      <b>${progressTitle}</b>
-      <div class="personal-progress-bar"><span style="width:${projectPct}%"></span></div>
-      <div>${progressText}</div>
-      <div class="muted" style="margin-top:5px">เปอร์เซ็นต์นี้เป็นความก้าวหน้าตามเกณฑ์โครงการ 2 ใน 3 ด้าน ไม่ได้หมายถึง “เปอร์เซ็นต์สุขภาพ” ของร่างกาย</div>
+    <div class="mock-progress">
+      <div class="mock-progress-title"><span>${projectTitle}</span><span>${projectPct}%</span></div>
+      <div class="mock-progress-bar"><span style="width:${projectPct}%"></span></div>
+      <div class="mock-progress-sub">${projectText}</div>
+      <div class="muted" style="margin-top:5px">เปอร์เซ็นต์นี้หมายถึงความก้าวหน้าตามเกณฑ์โครงการ ไม่ใช่เปอร์เซ็นต์สุขภาพของร่างกาย</div>
     </div>
 
-    <div class="personal-progress">
-      <b>กิจกรรมทางกายรายสัปดาห์ ${whoPct}%</b>
-      <div class="personal-progress-bar"><span style="width:${whoPct}%"></span></div>
-      <div class="muted">${who}/150 นาทีเทียบเท่า WHO</div>
+    <div class="mock-progress mock-who">
+      <div class="mock-progress-title"><span>กิจกรรมทางกายรายสัปดาห์</span><span>${whoPct}%</span></div>
+      <div class="mock-progress-bar"><span style="width:${whoPct}%"></span></div>
+      <div class="mock-progress-sub">${who}/150 นาทีเทียบเท่า WHO ${h.whoTargetMet?"· ✅ ถึงเกณฑ์":"· ยังไม่ถึงเกณฑ์"}</div>
     </div>
 
     <div class="personal-health-actions">
@@ -422,7 +619,6 @@ function renderPersonalHealthOverview(h){
       <button class="btn primary" onclick="openHealth()">＋ บันทึกสุขภาพ</button>
     </div>`;
 }
-
 function openActivity(){
   const profileComplete=Boolean(
     String(currentProfile.firstName||"").trim() &&
@@ -738,43 +934,48 @@ function svgTrendChart(records,key,title,digits,suffix){
     return `<div class="trend-card"><div class="trend-title">${esc(title)}</div><div class="muted">ต้องมีข้อมูลอย่างน้อย 2 ครั้งจึงจะแสดงกราฟแนวโน้ม</div></div>`;
   }
 
-  const values=rows.map(r=>Number(r[key]));
+  const viewRows=rows.slice(-6);
+  const values=viewRows.map(r=>Number(r[key]));
   let min=Math.min(...values),max=Math.max(...values);
-  if(max===min){max+=1;min=Math.max(0,min-1)}
+  const spread=Math.max(.01,max-min);
+  min=Math.max(0,min-spread*.25);
+  max=max+spread*.25;
+  if(max===min){max+=1}
 
-  const w=320,h=125,padL=35,padR=10,padT=12,padB=22;
+  const w=330,h=122,padL=30,padR=9,padT=21,padB=25;
   const plotW=w-padL-padR,plotH=h-padT-padB;
 
   const pts=values.map((v,i)=>{
-    const px=padL+(rows.length===1?plotW/2:(i/(rows.length-1))*plotW);
+    const px=padL+(i/(values.length-1))*plotW;
     const py=padT+((max-v)/(max-min))*plotH;
-    return {px,py,v,date:rows[i].recordDate||""};
+    return {px,py,v,date:viewRows[i].recordDate||""};
   });
 
   const poly=pts.map(p=>`${p.px.toFixed(1)},${p.py.toFixed(1)}`).join(" ");
-  const circles=pts.map(p=>`<circle cx="${p.px.toFixed(1)}" cy="${p.py.toFixed(1)}" r="3.2" fill="#18352b"><title>${esc(p.date)}: ${p.v.toFixed(digits)}${suffix}</title></circle>`).join("");
-  const first=rows[0].recordDate||"";
-  const last=rows[rows.length-1].recordDate||"";
+  const items=pts.map((p,i)=>{
+    const dateShort=String(p.date||"").slice(5).replace("-","/");
+    return `
+      <circle cx="${p.px.toFixed(1)}" cy="${p.py.toFixed(1)}" r="3.4" fill="#168446"/>
+      <text x="${p.px.toFixed(1)}" y="${Math.max(10,p.py-7).toFixed(1)}" text-anchor="middle" font-size="9" fill="#33433b">${p.v.toFixed(digits)}</text>
+      <text x="${p.px.toFixed(1)}" y="${h-6}" text-anchor="middle" font-size="8.5" fill="#7b8681">${esc(dateShort)}</text>`;
+  }).join("");
+
   const latest=values[values.length-1];
 
   return `<div class="trend-card">
     <div class="trend-title">${esc(title)} <span class="muted">ล่าสุด ${latest.toFixed(digits)}${suffix}</span></div>
     <svg class="trend-svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(title)}">
-      <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h-padB}" stroke="#dfe6e2" stroke-width="1"/>
-      <line x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}" stroke="#dfe6e2" stroke-width="1"/>
-      <text x="2" y="${padT+4}" class="trend-axis">${max.toFixed(digits)}</text>
-      <text x="2" y="${h-padB}" class="trend-axis">${min.toFixed(digits)}</text>
-      <polyline points="${poly}" fill="none" stroke="#18352b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-      ${circles}
-      <text x="${padL}" y="${h-5}" class="trend-axis">${esc(first)}</text>
-      <text x="${w-padR}" y="${h-5}" text-anchor="end" class="trend-axis">${esc(last)}</text>
+      <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h-padB}" stroke="#e2e8e4" stroke-width="1"/>
+      <line x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}" stroke="#e2e8e4" stroke-width="1"/>
+      <polyline points="${poly}" fill="none" stroke="#168446" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      ${items}
     </svg>
-    <div class="trend-sub">ดูแนวโน้มจากข้อมูลที่คุณบันทึกไว้</div>
+    <div class="trend-sub">แนวโน้มจากข้อมูลสุขภาพที่คุณบันทึก</div>
   </div>`;
 }
 
 function renderHealthTrendCharts(records){
-  return `<div class="section">📈 กราฟแนวโน้มสุขภาพของฉัน</div>
+  return `<div class="detail-section-title">📈 กราฟแนวโน้มสุขภาพของฉัน</div>
     <div class="trend-wrap">
       ${svgTrendChart(records,"bmi","BMI",1,"")}
       ${svgTrendChart(records,"whtr","WHtR เอว/ส่วนสูง",2,"")}
@@ -787,72 +988,66 @@ function renderHealth(x){
 
   if(l){
     const bmiInfo=bmiInterpretation(l.bmi);
-    const whrInfo=whrInterpretation(l.whr);
     const whtrInfo=whtrInterpretation(l.whtr);
     const pa=x.currentActivity||{};
     const assess=x.assessment||null;
+    const who=Number(pa.whoEquivalentMinutes||0);
+    const met=Number(pa.metMinutes||0);
+    const projectPct=assess&&assess.assessable?Math.min(100,Math.round((Number(assess.score||0)/2)*100)):0;
 
-    h+=`<div class="healthgrid">
-      <div class="metric">น้ำหนัก<strong>${l.weightKg} kg</strong></div>
-      <div class="metric">BMI<strong>${l.bmi}</strong></div>
-      <div class="metric">รอบเอว<strong>${(Number(l.waistCm||0)/2.54).toFixed(1)} นิ้ว</strong></div>
-      <div class="metric">เอว/ส่วนสูง<strong>${Number(l.whtr||0).toFixed(2)}</strong></div>
-    </div>
-
-    <div class="health-interpret">
-      <div class="health-result ${bmiInfo.cls}">
-        <strong>การแปลผล BMI</strong>
-        <div class="value">${esc(bmiInfo.label)}</div>
-        <div class="health-ref">ช่วงอ้างอิงที่ใช้ในโครงการ: 18.5–22.9 kg/m²</div>
+    h+=`<div class="health-detail-top">
+      <div class="health-detail-metric">
+        <small>BMI</small><b>${Number(l.bmi||0).toFixed(1)}</b>
+        <div class="health-detail-status">${esc(bmiInfo.label)}</div>
       </div>
-
-      <div class="health-result ${whtrInfo.cls}">
-        <strong>การแปลผลเอวต่อส่วนสูง (WHtR)</strong>
-        <div class="value">${esc(whtrInfo.label)}</div>
-        <div class="health-ref">แนวทาง NICE: 0.40–0.49 = ไม่เพิ่มความเสี่ยง · 0.50–0.59 = ความเสี่ยงเพิ่มขึ้น · ≥0.60 = ความเสี่ยงเพิ่มขึ้นมาก</div>
+      <div class="health-detail-metric">
+        <small>WHtR</small><b>${Number(l.whtr||0).toFixed(2)}</b>
+        <div class="health-detail-status">${esc(whtrInfo.label)}</div>
       </div>
-
-      <div class="health-result ${whrInfo.cls}">
-        <strong>ข้อมูลเอวต่อสะโพก (WHR)</strong>
-        <div class="value">${Number(l.whr||0).toFixed(2)}</div>
-        <div class="health-ref">${esc(whrInfo.label)} · เก็บไว้เป็นข้อมูลประกอบ แต่ WHtR ใช้เป็นตัวชี้วัดหลักของโครงการ</div>
+      <div class="health-detail-metric">
+        <small>MET-min</small><b>${met.toLocaleString("th-TH")}</b>
+        <div class="health-detail-status">7 วันล่าสุด</div>
       </div>
-    </div>
-
-    <div class="card item" style="margin-top:10px">
-      <b>🏃 กิจกรรมทางกาย 7 วันล่าสุด</b>
-      <div class="healthgrid" style="margin-top:8px">
-        <div class="metric">MET-min<strong>${Number(pa.metMinutes||0).toLocaleString("th-TH")}</strong></div>
-        <div class="metric">WHO-equivalent<strong>${Number(pa.whoEquivalentMinutes||0)} / 150 นาที</strong></div>
-      </div>
-      <div class="note" style="margin-top:8px">
-        นาทีเทียบเท่า WHO = นาทีระดับปานกลาง + (2 × นาทีระดับหนัก)
-        ${pa.whoTargetMet?`<b> · ✅ ถึงเกณฑ์กิจกรรมทางกายรายสัปดาห์</b>`:` · ยังไม่ถึงเกณฑ์รายสัปดาห์`}
+      <div class="health-detail-metric">
+        <small>WHO-equivalent</small><b>${who}/150</b>
+        <div class="health-detail-status">${pa.whoTargetMet?"ถึงเกณฑ์":"ยังไม่ถึงเกณฑ์"}</div>
       </div>
     </div>`;
 
     if(assess){
       if(assess.assessable){
-        const pct=Math.round((Number(assess.score||0)/3)*100);
-        h+=`<div class="health-outcome ${assess.healthImproved?"good":"wait"}">
-          <div class="health-outcome-title">${assess.healthImproved?"✅ มีแนวโน้มสุขภาพดีขึ้นตามเกณฑ์โครงการ":"📊 การประเมินผลสุขภาพ"}</div>
-          <div><b>${assess.score}/3 ด้าน</b> ผ่านเกณฑ์</div>
-          <div class="health-progress"><span style="width:${pct}%"></span></div>
-          <div class="criteria-list">
-            <div class="criteria-item ${assess.activityCriterion?"pass":"fail"}">${assess.activityCriterion?"✅":"○"} กิจกรรมทางกายถึงเกณฑ์ WHO ในช่วงประเมิน</div>
-            <div class="criteria-item ${assess.whtrCriterion?"pass":"fail"}">${assess.whtrCriterion?"✅":"○"} WHtR ต่ำกว่า 0.50 หรือดีขึ้นจาก Baseline อย่างน้อย 0.01</div>
-            <div class="criteria-item ${assess.bmiCriterion?"pass":"fail"}">${assess.bmiCriterion?"✅":"○"} BMI อยู่ในช่วงอ้างอิง หรือเข้าใกล้ช่วงอ้างอิงอย่างน้อย 0.5 kg/m²</div>
+        h+=`<div class="health-assessment-box">
+          <div class="health-outcome-title">การประเมินผลสุขภาพ</div>
+          <div class="assessment-layout">
+            <div class="assessment-score">
+              <b>${assess.score}/3</b>
+              <small>${assess.healthImproved?"ผ่านเกณฑ์":"ด้านผ่านเกณฑ์"}</small>
+            </div>
+            <div class="assessment-criteria">
+              <div class="assessment-criterion ${assess.activityCriterion?"pass":""}">${assess.activityCriterion?"✅":"○"} กิจกรรมทางกายถึงเกณฑ์ WHO</div>
+              <div class="assessment-criterion ${assess.whtrCriterion?"pass":""}">${assess.whtrCriterion?"✅":"○"} WHtR ดีขึ้นหรืออยู่ในช่วงเหมาะสม</div>
+              <div class="assessment-criterion ${assess.bmiCriterion?"pass":""}">${assess.bmiCriterion?"✅":"○"} BMI อยู่ในช่วงอ้างอิงหรือดีขึ้น</div>
+            </div>
           </div>
-          <div class="note" style="margin-top:8px">โครงการกำหนด “สุขภาพดีขึ้น” เมื่อผ่านอย่างน้อย 2 ใน 3 ด้าน ใช้เพื่อประเมินผลโครงการ ไม่ใช่การวินิจฉัยโรค</div>
+          <div class="mock-progress" style="margin-top:10px;background:#fff">
+            <div class="mock-progress-title"><span>ความก้าวหน้าสู่เกณฑ์โครงการ</span><span>${projectPct}%</span></div>
+            <div class="mock-progress-bar"><span style="width:${projectPct}%"></span></div>
+            <div class="mock-progress-sub">${assess.healthImproved?"ถึงเกณฑ์สุขภาพดีขึ้นแล้ว":`ต้องผ่านอย่างน้อย 2 ใน 3 ด้าน`}</div>
+          </div>
         </div>`;
       }else{
-        h+=`<div class="health-outcome wait"><div class="health-outcome-title">📊 การประเมินผลสุขภาพ</div><div class="note">${esc(assess.message||"ต้องมีข้อมูลอย่างน้อย 2 ครั้ง")}</div></div>`;
+        h+=`<div class="health-assessment-box">
+          <div class="health-outcome-title">การประเมินผลสุขภาพ</div>
+          <div class="muted">${esc(assess.message||"ต้องมีข้อมูลอย่างน้อย 2 ครั้ง")}</div>
+        </div>`;
       }
     }
 
+    h+=renderHealthTrendCharts(x&&x.records?x.records:[]);
+
     if(x.changes){
-      h+=`<div class="card item" style="margin-top:9px">
-        <b>การเปลี่ยนแปลงจาก Baseline</b>
+      h+=`<div class="detail-section-title">การเปลี่ยนแปลงจาก Baseline</div>
+      <div class="card item">
         <div class="muted">น้ำหนัก ${x.changes.weightKg>=0?"+":""}${x.changes.weightKg} kg · รอบเอว ${(Number(x.changes.waistCm||0)/2.54)>=0?"+":""}${(Number(x.changes.waistCm||0)/2.54).toFixed(1)} นิ้ว · BMI ${x.changes.bmi>=0?"+":""}${x.changes.bmi} · WHtR ${x.changes.whtr>=0?"+":""}${Number(x.changes.whtr||0).toFixed(2)}</div>
       </div>`;
     }
@@ -860,20 +1055,25 @@ function renderHealth(x){
     if(x.followupSchedule){
       h+=`<div class="followup-box">
         <b>🗓 แผนติดตามผล</b>
-        <div class="note" style="margin-top:5px">Baseline ${esc(x.followupSchedule.baselineDate)} · 3 เดือน ${esc(x.followupSchedule.month3)} · 6 เดือน ${esc(x.followupSchedule.month6)}</div>
+        <div class="note" style="margin-top:6px">Baseline ${esc(x.followupSchedule.baselineDate)} · 3 เดือน ${esc(x.followupSchedule.month3)} · 6 เดือน ${esc(x.followupSchedule.month6)}</div>
       </div>`;
     }
 
-    h+=`<div class="note" style="margin-top:9px">ข้อมูลสุขภาพนี้เป็นการคัดกรองและติดตามแนวโน้มเบื้องต้น ไม่ใช่การวินิจฉัยโรค</div>`;
+    h+=`<div class="note" style="margin-top:9px">ข้อมูลสุขภาพนี้ใช้เพื่อติดตามแนวโน้มของคุณเองและประเมินผลโครงการ ไม่ใช่การวินิจฉัยโรค</div>`;
   }else{
     const pa=x&&x.currentActivity?x.currentActivity:{};
-    h+=`<div class="muted">ยังไม่มีข้อมูลสุขภาพ</div>
-    <div class="card item" style="margin-top:10px"><b>🏃 กิจกรรมทางกาย 7 วันล่าสุด</b><div class="muted">MET-min ${Number(pa.metMinutes||0).toLocaleString("th-TH")} · WHO-equivalent ${Number(pa.whoEquivalentMinutes||0)}/150 นาที</div></div>`;
+    h+=`<div class="card item">
+      <b>เริ่มสร้าง Baseline สุขภาพ</b>
+      <div class="muted" style="margin-top:5px">บันทึกน้ำหนัก ส่วนสูง รอบเอว และรอบสะโพก เพื่อเริ่มติดตามแนวโน้มสุขภาพของคุณ</div>
+      <div class="mock-progress" style="margin-top:10px">
+        <div class="mock-progress-title"><span>กิจกรรม 7 วันล่าสุด</span><span>${Math.min(100,Math.round((Number(pa.whoEquivalentMinutes||0)/150)*100))}%</span></div>
+        <div class="mock-progress-bar"><span style="width:${Math.min(100,Math.round((Number(pa.whoEquivalentMinutes||0)/150)*100))}%"></span></div>
+        <div class="mock-progress-sub">${Number(pa.whoEquivalentMinutes||0)}/150 นาทีเทียบเท่า WHO</div>
+      </div>
+    </div>`;
   }
 
-  h+=renderHealthTrendCharts(x&&x.records?x.records:[]);
-
-  h+=`<div class="section">บันทึกข้อมูลใหม่</div>
+  h+=`<div class="detail-section-title">บันทึกข้อมูลสุขภาพ</div>
   <form onsubmit="saveHealth(event)">
     <div class="two">
       <div class="field"><label>น้ำหนัก (kg)</label><input id="wt" type="number" step=".1" required></div>
@@ -887,12 +1087,11 @@ function renderHealth(x){
     <button id="healthSaveBtn" class="btn primary">บันทึกข้อมูลสุขภาพ</button>
     <div id="healthSaveState" class="review-state"></div>
   </form>
-  <div class="note" style="margin-top:9px">ข้อมูลสุขภาพแสดงเฉพาะเจ้าของบัญชี ไม่ถูกนำไปจัดอันดับกับผู้อื่น</div>`;
+  <div class="note" style="margin-top:9px">ข้อมูลสุขภาพแสดงเฉพาะเจ้าของบัญชี และไม่ถูกนำไปจัดอันดับกับผู้อื่น</div>`;
 
   byId("sheetBody").innerHTML=h;
   byId("hdate").value=new Date().toISOString().slice(0,10);
 }
-
 function saveHealth(e){
   e.preventDefault();
 
