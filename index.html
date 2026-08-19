@@ -15,6 +15,11 @@
 .profile-edit.warn{background:#fff4d8;color:#8a6200}
 .scoregrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.scorebox{padding:14px;border-radius:17px;background:#fff}.scorebox.rank{background:#fff8e8}.big{font-size:28px;font-weight:800}
 .section{margin:20px 3px 9px;font-weight:800}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center;padding:13px 4px}.stat b{display:block;font-size:21px;margin-top:4px}
+.score-note{margin-top:11px;padding:14px 15px;background:#f8fbf9;border:1px solid #e1ebe5;border-radius:17px}
+.score-note-title{font-weight:800;margin-bottom:7px}
+.score-note-grid{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.score-chip{font-size:12px;background:#fff;border:1px solid #e2e9e5;border-radius:999px;padding:6px 8px;white-space:nowrap}
+.score-note .note{margin-top:7px}
 .menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mbtn{border:0;background:#fff;border-radius:18px;padding:17px 13px;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.06);cursor:pointer}.mbtn .mi{font-size:28px;margin-bottom:7px}.mbtn b{display:block;font-size:15px}.mbtn small{color:#74807b;display:block;margin-top:4px;line-height:1.4}.wide{grid-column:1/-1;background:#18352b;color:#fff}.wide small{color:#c9d6d1}.adminbtn{grid-column:1/-1;background:#fff0d8}
 .sheet{position:fixed;inset:0;background:rgba(14,22,18,.56);z-index:100;display:flex;align-items:flex-end;justify-content:center;padding:14px}.sheetbox{width:min(600px,100%);max-height:93vh;overflow:auto;background:#fff;border-radius:24px 24px 15px 15px;padding:18px}.sheethead{display:flex;justify-content:space-between;gap:10px;align-items:center;position:sticky;top:-18px;background:#fff;padding:4px 0 10px;z-index:3}.sheethead h3{margin:0}.close{width:38px;height:38px;border:0;border-radius:50%;background:#eff2f1;font-size:20px}.field{margin:12px 0}.field label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #d8dfdb;border-radius:12px;padding:12px;font-size:16px}.field textarea{min-height:78px}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{border:0;border-radius:13px;padding:13px 15px;font-weight:800;font-size:15px;cursor:pointer}.primary{background:#06c755;color:#fff;width:100%}.secondary{background:#eef3f0}.danger{background:#fff0f1;color:#b42335}.approve{background:#e7f8ec;color:#167840}.actions{display:flex;gap:8px;flex-wrap:wrap}.preview{display:none;width:100%;max-height:260px;object-fit:contain;border-radius:13px;background:#f4f6f5;margin-top:8px}
 .list{display:grid;gap:9px}.item{padding:14px}.itemtop{display:flex;justify-content:space-between;gap:10px}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px}.pending{background:#fff4d8;color:#8a6200}.approved{background:#e8f8ed;color:#147a3e}.rejected{background:#fff0f1;color:#ad2134}.completed{background:#e9f2ff;color:#235ea7}
@@ -58,9 +63,26 @@
       <div class="scoregrid"><div class="scorebox"><div class="muted">คะแนนสะสมทั้งหมด</div><div class="big" id="lifePts">0</div><div class="muted">คะแนนคงเหลือแลกรางวัล <span id="balPts">0</span></div></div><div class="scorebox rank"><div class="muted">อันดับกิจกรรม</div><div class="big">#<span id="rank">-</span></div><div class="muted">จาก <span id="people">0</span> คน</div></div></div>
     </section>
     <div class="section">กิจกรรมของฉัน</div><div class="stats"><div class="card stat">ทั้งหมด<b id="aAll">0</b></div><div class="card stat">รออนุมัติ<b id="aPend">0</b></div><div class="card stat">อนุมัติแล้ว<b id="aOk">0</b></div></div>
+
+    <div class="score-note card">
+      <div class="score-note-title">ℹ️ เกณฑ์คะแนนกิจกรรม DTH Health</div>
+      <div class="note">คิดคะแนนจาก <b>ระยะเวลาที่ทำกิจกรรม</b> และระดับความหนักโดยประมาณ เพื่อให้กิจกรรมหลายรูปแบบเปรียบเทียบกันได้</div>
+      <div class="score-note-grid">
+        <span class="score-chip">🚶 เดิน 1 คะแนน/นาที</span>
+        <span class="score-chip">🏃 วิ่ง 2 คะแนน/นาที</span>
+        <span class="score-chip">🚴 ปั่น 1.5 คะแนน/นาที</span>
+        <span class="score-chip">🪢 กระโดดเชือก 2 คะแนน/นาที</span>
+        <span class="score-chip">🧘 โยคะ 0.5 คะแนน/นาที</span>
+        <span class="score-chip">🎶 แอโรบิก 2 คะแนน/นาที</span>
+        <span class="score-chip">🥾 เดินป่า 1.5 คะแนน/นาที</span>
+        <span class="score-chip">🏊 ว่ายน้ำ 1.5 คะแนน/นาที</span>
+      </div>
+      <div class="note"><b>จำกัดคะแนนสูงสุด 60 คะแนน/วัน และ 300 คะแนน/สัปดาห์</b> เพื่อเน้นความสม่ำเสมอมากกว่าการทำกิจกรรมหนักเพื่อสะสมคะแนน คะแนนนี้เป็นเกณฑ์ของโครงการ ไม่ใช่คะแนนมาตรฐานของ WHO</div>
+    </div>
+
     <div class="section">เมนูหลัก</div>
     <div class="menu">
-      <button class="mbtn" onclick="openActivity()"><div class="mi">🏃</div><b>บันทึกกิจกรรม</b><small>วิ่ง เดิน ปั่น และแนบหลักฐาน</small></button>
+      <button class="mbtn" onclick="openActivity()"><div class="mi">🏃</div><b>บันทึกกิจกรรม</b><small>วิ่ง เดิน ปั่น กระโดดเชือก โยคะ แอโรบิก เดินป่า ว่ายน้ำ</small></button>
       <button class="mbtn" onclick="openHealth()"><div class="mi">❤️</div><b>สุขภาพของฉัน</b><small>น้ำหนัก ส่วนสูง BMI รอบเอว/สะโพก (นิ้ว)</small></button>
       <button class="mbtn" onclick="loadRanking()"><div class="mi">🏆</div><b>Ranking</b><small>อันดับจากคะแนนกิจกรรม</small></button>
       <button class="mbtn" onclick="loadRewards()"><div class="mi">🎁</div><b>Rewards</b><small>ดูและแลกรางวัล</small></button>
@@ -82,7 +104,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_BUILD="prod-2026-08-17-health-interpret";
+const APP_BUILD="prod-2026-08-19-projectscore16";
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
 let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
@@ -289,15 +311,30 @@ function openActivity(){
   }
   openSheet("🏃 บันทึกกิจกรรม",`
     <form onsubmit="submitActivity(event)">
-      <div class="field"><label>ประเภท</label><select id="atype"><option value="run">🏃 วิ่ง</option><option value="walk">🚶 เดิน</option><option value="bike">🚴 ปั่นจักรยาน</option></select></div>
-      <div class="two"><div class="field"><label>ระยะทาง (กม.)</label><input id="dist" type="number" min=".01" step=".01" required></div><div class="field"><label>เวลา (นาที)</label><input id="mins" type="number" min="1" step="1" required></div></div>
+      <div class="field"><label>ประเภทกิจกรรม</label>
+        <select id="atype" onchange="toggleActivityFields()">
+          <option value="run">🏃 วิ่ง</option>
+          <option value="walk">🚶 เดิน</option>
+          <option value="bike">🚴 ปั่นจักรยาน</option>
+          <option value="jump_rope">🪢 กระโดดเชือก</option>
+          <option value="yoga">🧘 โยคะ</option>
+          <option value="aerobic">🎶 แอโรบิก</option>
+          <option value="hike">🥾 เดินป่า</option>
+          <option value="swim">🏊 ว่ายน้ำ</option>
+        </select>
+      </div>
+      <div class="two">
+        <div id="distanceField" class="field"><label>ระยะทาง (กม.)</label><input id="dist" type="number" min=".01" step=".01" required></div>
+        <div class="field"><label>เวลา (นาที)</label><input id="mins" type="number" min="1" step="1" required></div>
+      </div>
+      <div id="activityRuleNote" class="note" style="margin-top:-4px;margin-bottom:8px"></div>
       <div class="field"><label>วันที่</label><input id="adate" type="date" required></div>
       <div class="field"><label>หมายเหตุ</label><textarea id="anote" maxlength="500"></textarea></div>
       <div class="field"><label>รูปหลักฐาน</label><input id="efile" type="file" accept="image/*" required><img id="eprev" class="preview"></div>
       <button id="activitySubmitBtn" class="btn primary">ส่งกิจกรรม</button>
       <div id="activitySubmitState" class="review-state"></div>
     </form>`);
-  byId("adate").value=new Date().toISOString().slice(0,10); evidenceData="";
+  byId("adate").value=new Date().toISOString().slice(0,10); evidenceData=""; toggleActivityFields();
   byId("efile").addEventListener("change",async function(){
     const f=this.files&&this.files[0];if(!f)return;
     const s=byId("activitySubmitState");
@@ -313,6 +350,53 @@ function openActivity(){
     }
   });
 }
+const ACTIVITY_LABELS={
+  run:"วิ่ง",
+  walk:"เดิน",
+  bike:"ปั่นจักรยาน",
+  jump_rope:"กระโดดเชือก",
+  yoga:"โยคะ",
+  aerobic:"แอโรบิก",
+  hike:"เดินป่า",
+  swim:"ว่ายน้ำ"
+};
+
+const DISTANCE_ACTIVITY_TYPES=["run","walk","bike","hike"];
+
+const PROJECT_SCORE_PER_MIN={
+  run:2,
+  walk:1,
+  bike:1.5,
+  jump_rope:2,
+  yoga:0.5,
+  aerobic:2,
+  hike:1.5,
+  swim:1.5
+};
+
+function activityLabel(type){
+  return ACTIVITY_LABELS[type]||type||"กิจกรรม";
+}
+
+function toggleActivityFields(){
+  const type=byId("atype")?byId("atype").value:"run";
+  const isDistance=DISTANCE_ACTIVITY_TYPES.includes(type);
+  const field=byId("distanceField");
+  const dist=byId("dist");
+  const note=byId("activityRuleNote");
+
+  if(field) field.style.display=isDistance?"block":"none";
+  if(dist){
+    dist.required=isDistance;
+    if(!isDistance) dist.value="";
+  }
+  if(note){
+    const rate=PROJECT_SCORE_PER_MIN[type]||0;
+    const distanceText=isDistance?" · กรุณากรอกระยะทางเพื่อประกอบการตรวจสอบ":"";
+    note.textContent=`เกณฑ์โครงการ: ${rate} คะแนน/นาที${distanceText} · รวมสูงสุด 60 คะแนน/วัน และ 300 คะแนน/สัปดาห์`;
+  }
+}
+
 function submitActivity(e){
   e.preventDefault();
 
@@ -341,7 +425,7 @@ function submitActivity(e){
 
   send("submitActivity",{
     activityType:byId("atype").value,
-    distanceKm:byId("dist").value,
+    distanceKm:DISTANCE_ACTIVITY_TYPES.includes(byId("atype").value)?byId("dist").value:0,
     durationMinutes:byId("mins").value,
     activityDate:byId("adate").value,
     note:byId("anote").value,
@@ -433,8 +517,11 @@ function compressImage(file){
 function loadHistory(){openSheet("📋 ประวัติกิจกรรม","<div class='muted'>กำลังโหลด...</div>");send("getMyActivities",{})}
 function renderHistory(rows){
   let h="<div class='list'>";if(!rows.length)h+="<div class='card item'>ยังไม่มีกิจกรรม</div>";
-  rows.forEach(a=>{const cls=a.status==="approved"?"approved":a.status==="rejected"?"rejected":"pending";const typ={run:"วิ่ง",walk:"เดิน",bike:"ปั่นจักรยาน"}[a.activityType]||a.activityType;
-    h+=`<div class="card item"><div class="itemtop"><b>${esc(typ)} · ${a.distanceKm} กม.</b><span class="badge ${cls}">${esc(a.status)}</span></div><div class="muted">${esc(a.activityDate)} · ${a.durationMinutes} นาที</div><div>คะแนน: <b>${a.points||0}</b></div>${a.adminNote?`<div class="note">Admin: ${esc(a.adminNote)}</div>`:""}</div>`});
+  rows.forEach(a=>{
+    const cls=a.status==="approved"?"approved":a.status==="rejected"?"rejected":"pending";
+    const typ=activityLabel(a.activityType);
+    const distanceText=Number(a.distanceKm||0)>0?` · ${a.distanceKm} กม.`:"";
+    h+=`<div class="card item"><div class="itemtop"><b>${esc(typ)}${distanceText}</b><span class="badge ${cls}">${esc(a.status)}</span></div><div class="muted">${esc(a.activityDate)} · ${a.durationMinutes} นาที</div><div>คะแนน: <b>${a.points||0}</b></div>${a.adminNote?`<div class="note">Admin: ${esc(a.adminNote)}</div>`:""}</div>`});
   h+="</div>";byId("sheetBody").innerHTML=h;
 }
 
@@ -586,14 +673,14 @@ function renderAdminPending(rows){
   let h="<div class='list'>";
   if(!rows.length)h+="<div class='muted'>ไม่มีรายการรอตรวจ</div>";
   rows.forEach(a=>{
-    const typ=esc({run:"วิ่ง",walk:"เดิน",bike:"ปั่น"}[a.activityType]||a.activityType);
+    const typ=esc(activityLabel(a.activityType));
     const shortId=esc(String(a.activityId||"").slice(-6));
     h+=`<div id="reviewCard_${esc(a.activityId)}" class="card item review-card">
       <div class="itemtop">
         <div><b class="review-name">${esc(a.displayName)}</b><div class="muted">รายการ #${shortId}</div></div>
         <span class="badge pending">รอตรวจ</span>
       </div>
-      <div class="review-summary" style="margin-top:7px"><b>${typ}</b> ${a.distanceKm} กม. · ${a.durationMinutes} นาที</div>
+      <div class="review-summary" style="margin-top:7px"><b>${typ}</b>${Number(a.distanceKm||0)>0?` ${a.distanceKm} กม. ·`:""} ${a.durationMinutes} นาที</div>
       <div class="muted">${esc(a.activityDate)}</div>
       <div id="reviewState_${esc(a.activityId)}" class="review-state"></div>
       <div class="field"><input id="note_${a.activityId}" placeholder="หมายเหตุ Admin (ถ้ามี)"></div>
