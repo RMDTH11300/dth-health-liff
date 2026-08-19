@@ -253,6 +253,30 @@
   .quickstat b{font-size:21px}
 }
 
+
+.calorie-strip{
+  margin-top:10px;
+  padding:12px 13px;
+  background:#fff7ea;
+  border:1px solid #f2dfbb;
+  border-radius:13px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px
+}
+.calorie-strip b{font-size:19px;color:#9a5a12;white-space:nowrap}
+.calorie-strip small{display:block;color:#7a6d5c;line-height:1.35}
+.calorie-note{
+  margin-top:7px;
+  padding:9px 10px;
+  background:#fafbf9;
+  border-radius:11px;
+  font-size:11px;
+  color:#6c7771;
+  line-height:1.45
+}
+
 </style>
 </head>
 <body>
@@ -324,7 +348,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_BUILD="prod-2026-08-19-personalhealth18-mockup";
+const APP_BUILD="prod-2026-08-19-calories18b";
 const LIFF_ID="2011115304-nt4j971c";
 const BACKEND_URL="https://script.google.com/macros/s/AKfycbzblvrR0yslDGkXxMB_Ug-fJXGbRcD6T4X1CzGksXcGfhJZmCvcQNc492OWcHV46LcCBQ/exec";
 let idToken="", evidenceData="", currentAction="", adminCache=null, currentProfile={};
@@ -542,6 +566,7 @@ function renderPersonalHealthOverview(h){
         <div class="mock-progress-bar"><span style="width:${whoPct}%"></span></div>
         <div class="mock-progress-sub">${who}/150 นาทีเทียบเท่า WHO</div>
       </div>
+      <div class="calorie-note">🔥 หากบันทึกน้ำหนัก ระบบจะสามารถประมาณพลังงานที่ใช้จากกิจกรรมด้วยสูตร MET × น้ำหนัก (กก.) × เวลา (ชม.)</div>
       <div class="personal-health-actions">
         <button class="btn primary" onclick="openHealth()">＋ บันทึกข้อมูลสุขภาพ</button>
       </div>`;
@@ -600,6 +625,15 @@ function renderPersonalHealthOverview(h){
         <div class="mini-status">${h.assessable?"เกณฑ์โครงการ":"รอติดตาม"}</div>
       </div>
     </div>
+
+    <div class="calorie-strip">
+      <div>
+        <small>🔥 พลังงานจากกิจกรรม 7 วันล่าสุด</small>
+        <div class="muted">คำนวณจาก MET × น้ำหนัก × เวลา</div>
+      </div>
+      <b>${h.hasWeightForCalories?`${Number(h.estimatedCalories||0).toLocaleString("th-TH")} kcal`:"—"}</b>
+    </div>
+    <div class="calorie-note">${h.hasWeightForCalories?"เป็นค่าประมาณจากน้ำหนักที่บันทึกไว้และชนิดกิจกรรม ใช้สำหรับดูแนวโน้มส่วนตัวเท่านั้น ไม่ใช้เป็นเป้าหมายหรือ Ranking":"บันทึกน้ำหนักในเมนูสุขภาพ เพื่อให้ระบบประมาณพลังงานจากกิจกรรมได้"}</div>
 
     <div class="mock-progress">
       <div class="mock-progress-title"><span>${projectTitle}</span><span>${projectPct}%</span></div>
@@ -843,7 +877,8 @@ function renderHistory(rows){
     const cls=a.status==="approved"?"approved":a.status==="rejected"?"rejected":"pending";
     const typ=activityLabel(a.activityType);
     const distanceText=Number(a.distanceKm||0)>0?` · ${a.distanceKm} กม.`:"";
-    h+=`<div class="card item"><div class="itemtop"><b>${esc(typ)}${distanceText}</b><span class="badge ${cls}">${esc(a.status)}</span></div><div class="muted">${esc(a.activityDate)} · ${a.durationMinutes} นาที</div><div>คะแนน: <b>${a.points||0}</b></div>${a.adminNote?`<div class="note">Admin: ${esc(a.adminNote)}</div>`:""}</div>`});
+    const calText=a.hasWeightForCalories&&Number(a.estimatedCalories||0)>0?`<div class="note">🔥 พลังงานโดยประมาณ ${Number(a.estimatedCalories||0).toLocaleString("th-TH")} kcal</div>`:"";
+    h+=`<div class="card item"><div class="itemtop"><b>${esc(typ)}${distanceText}</b><span class="badge ${cls}">${esc(a.status)}</span></div><div class="muted">${esc(a.activityDate)} · ${a.durationMinutes} นาที</div><div>คะแนน: <b>${a.points||0}</b></div>${calText}${a.adminNote?`<div class="note">Admin: ${esc(a.adminNote)}</div>`:""}</div>`});
   h+="</div>";byId("sheetBody").innerHTML=h;
 }
 
@@ -879,6 +914,17 @@ function openScoreRules(){
         <span class="score-chip">🎶 แอโรบิก 2 คะแนน/นาที</span>
         <span class="score-chip">🥾 เดินป่า 1.5 คะแนน/นาที</span>
         <span class="score-chip">🏊 ว่ายน้ำ 1.5 คะแนน/นาที</span>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px;margin-bottom:10px">
+      <b>🔥 การประมาณพลังงานที่เผาผลาญ</b>
+      <div class="note" style="margin-top:7px">
+        สูตร: <b>แคลอรี ≈ MET × น้ำหนักตัว (กก.) × ระยะเวลา (ชั่วโมง)</b>
+        ระบบใช้ค่า MET ของกิจกรรมร่วมกับน้ำหนักที่เจ้าหน้าที่บันทึกไว้
+      </div>
+      <div class="note" style="margin-top:6px">
+        ค่านี้เป็นเพียงค่าประมาณสำหรับดูแนวโน้มส่วนตัว <b>ไม่ใช้คิดคะแนน ไม่ใช้ Ranking และไม่มีเป้าหมายแคลอรีที่ต้องทำให้ถึง</b>
       </div>
     </div>
 
@@ -1012,7 +1058,15 @@ function renderHealth(x){
         <small>WHO-equivalent</small><b>${who}/150</b>
         <div class="health-detail-status">${pa.whoTargetMet?"ถึงเกณฑ์":"ยังไม่ถึงเกณฑ์"}</div>
       </div>
-    </div>`;
+    </div>
+    <div class="calorie-strip">
+      <div>
+        <small>🔥 พลังงานที่ใช้จากกิจกรรม 7 วันล่าสุด</small>
+        <div class="muted">MET × น้ำหนัก (กก.) × ระยะเวลา (ชม.)</div>
+      </div>
+      <b>${pa.hasWeightForCalories?`${Number(pa.estimatedCalories||0).toLocaleString("th-TH")} kcal`:"—"}</b>
+    </div>
+    <div class="calorie-note">ค่าพลังงานเป็นการประมาณจาก MET และน้ำหนักที่บันทึกไว้ ค่าจริงอาจแตกต่างกันตามความหนักจริง ความฟิต และสรีรวิทยาของแต่ละคน และไม่ใช้ในการจัดอันดับ</div>`;
 
     if(assess){
       if(assess.assessable){
